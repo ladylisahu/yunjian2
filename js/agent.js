@@ -215,44 +215,140 @@ window.ShuijingAgent = (function () {
     return profileDesc;
   }
 
+  /** 根据用户提问动态识别目标日期（支持 明天/后天/昨天/具体月日 或 当前页面选中日期） */
+  function resolveDateContext(question, fallbackCtx) {
+    const Cal = window.ShuijingCalendar;
+    const Fortune = window.YunjianFortune;
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    let targetDate = null;
+
+    if (/后天|后日/.test(question)) {
+      targetDate = new Date(todayStart.getFullYear(), todayStart.getMonth(), todayStart.getDate() + 2);
+    } else if (/明天|明日|次日/.test(question)) {
+      targetDate = new Date(todayStart.getFullYear(), todayStart.getMonth(), todayStart.getDate() + 1);
+    } else if (/昨天|昨日/.test(question)) {
+      targetDate = new Date(todayStart.getFullYear(), todayStart.getMonth(), todayStart.getDate() - 1);
+    } else if (/今天|今日/.test(question)) {
+      targetDate = todayStart;
+    } else {
+      const m = question.match(/(\d{1,2})\s*[月\-\/]\s*(\d{1,2})/);
+      if (m) {
+        targetDate = new Date(todayStart.getFullYear(), parseInt(m[1], 10) - 1, parseInt(m[2], 10));
+      }
+    }
+
+    let almanac, personal;
+    if (targetDate && Cal && Fortune && state.profile) {
+      almanac = Cal.getAlmanac(targetDate);
+      personal = Fortune.getDailyPersonalFortune(state.profile, targetDate);
+    } else if (fallbackCtx) {
+      almanac = fallbackCtx.almanac;
+      personal = fallbackCtx.personal;
+      targetDate = almanac.date;
+    } else if (Cal && Fortune && state.profile) {
+      targetDate = todayStart;
+      almanac = Cal.getAlmanac(targetDate);
+      personal = Fortune.getDailyPersonalFortune(state.profile, targetDate);
+    }
+
+    if (!almanac || !personal) return null;
+
+    const diffDays = Math.round((new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()) - todayStart) / 86400000);
+    const dayLabel = diffDays === 0 ? '今日'
+      : diffDays === 1 ? '明日'
+      : diffDays === 2 ? '后日'
+      : diffDays === -1 ? '昨日'
+      : `${almanac.month}月${almanac.day}日`;
+
+    return { almanac, personal, dayLabel, dateKey: personal.dateKey };
+  }
+
+  /** 优先挑选白天清醒时段的黄道吉时（07:00 - 21:00） */
+  function pickPracticalGoodHours(almanac, limit = 3) {
+    const daytime = almanac.hours.filter(h => h.isGood && h.idx >= 4 && h.idx <= 10);
+    const pool = daytime.length > 0 ? daytime : almanac.hours.filter(h => h.isGood);
+    return pool.slice(0, limit).map(h => `${h.ganzhi}(${h.range})`);
+  }
+
   function generateLocalReply(question) {
     const tab = state.activeTab;
     const ctx = state.context[tab];
     const name = state.profile?.name || '道友';
     const q = question.trim();
 
-    if (tab === 'today' && ctx) {
-      const { personal, almanac } = ctx;
-      const topDim = [...personal.dimensions].sort((a, b) => b.score - a.score)[0];
-      const goodHours = almanac.hours.filter(h => h.isGood).map(h => `${h.ganzhi}(${h.range})`).slice(0, 3);
+    // 无论用户在哪个标签页，只要明确问了“明天/后天/今天/某月某日”或“穿衣/股票/签约/感情/出行”，都能直接推演该日运势
+    const asksSpecificDayOrTopic = /明天|明日|后天|后日|昨天|昨日|穿|颜色|衣服|搭配|股票|炒股|基金|投资|理财|买币|财运|签约|合作|面试|约会|表白|出行|搬家/.test(q);
 
-      if (q.includes('穿') || q.includes('颜色') || q.includes('衣服') || q.includes('搭配')) {
-        const w = almanac.wardrobe;
-        if (w) {
-          const [best, good, mid, , avoid] = w.tiers;
-          return `${name}安好，老夫按今日（${almanac.lunar} · 日支「${w.dayBranch}」属${w.dayElement}）为你奉上五行穿衣指南：\n\n` +
-            `✦ 首选《${best.name}》（大吉）：${best.colors} —— 大环境生你，最易招贵人与好人缘。\n` +
-            `✦ 谈判《${good.name}》（次吉）：${good.colors} —— 商务沟通、合作洽谈首选。\n` +
-            `✦ 奋斗《${mid.name}》（平）：${mid.colors} —— 适合拼业绩、攻坚进财。\n` +
-            `✦ 尽量避开《${avoid.name}》：${avoid.colors}。\n` +
-            `✦ 今日特吉生肖：${w.zodiacLuck.best.join('、')}；需要注意：${w.zodiacLuck.caution.join('、')}。`;
+    if ((tab === 'today' && ctx) || (asksSpecificDayOrTopic && tab !== 'divination')) {
+      const resolved = resolveDateContext(q, state.context.today);
+      if (resolved) {
+        const { personal, almanac, dayLabel, dateKey } = resolved;
+        const dimMap = Object.fromEntries(personal.dimensions.map(d => [d.label, d.score]));
+        const topDim = [...personal.dimensions].sort((a, b) => b.score - a.score)[0];
+        const goodHours = pickPracticalGoodHours(almanac, 3);
+
+        // 1. 股票 / 投资 / 理财 / 财运
+        if (/股票|炒股|基金|投资|理财|买币|财运|发财/.test(q)) {
+          const wealthScore = dimMap['财运'] ?? personal.overall;
+          const hasWealthYi = almanac.yi.some(x => ['纳财', '开市', '交易', '立券'].includes(x));
+          const tone = wealthScore >= 82
+            ? `${dayLabel}财运指数偏旺（${wealthScore} 分），思路较清晰，适合按既定纪律关注机会、分批布局或止盈复盘。`
+            : wealthScore >= 70
+              ? `${dayLabel}财运属于稳健区间（${wealthScore} 分），宜守不宜激进，适合做研究、低吸定投或控制轻仓试探，忌追高。`
+              : `${dayLabel}财运略偏波动（${wealthScore} 分），情绪容易受盘面牵动，建议多看少动、管住手不盲目加仓。`;
+          return `${name}安好，老夫为你推演${dayLabel}（${dateKey} · ${almanac.lunar} · ${almanac.pillars.day.stem}${almanac.pillars.day.branch}日 ${almanac.jianchuName}）的财运与投资气场：\n\n` +
+            `✦ 个人财运：综合 ${personal.overall} 分｜财运 ${wealthScore} 分｜关键词【${personal.keyword}】\n` +
+            `✦ 老夫判断：${tone}\n` +
+            `✦ 黄历参考：${dayLabel}宜「${almanac.yi.slice(0, 4).join('、')}」${hasWealthYi ? '（见纳财/开市之象，偏利稳健筹划）' : ''}，财神方位在【${almanac.caishen}】，白天吉时为 ${goodHours.join(' / ')}。\n` +
+            `✦ 理性提醒：命理与星象仅作心态和节奏参考，不构成投资建议；入市仍须以基本面、仓位管理与止损纪律为准。`;
         }
+
+        // 2. 五行穿衣搭配
+        if (/穿|颜色|衣服|搭配/.test(q)) {
+          const w = almanac.wardrobe;
+          if (w) {
+            const [best, good, mid, , avoid] = w.tiers;
+            return `${name}安好，老夫按${dayLabel}（${dateKey} · ${almanac.lunar} · 日支「${w.dayBranch}」属${w.dayElement}）为你奉上五行穿衣指南：\n\n` +
+              `✦ 首选《${best.name}》（大吉）：${best.colors} —— 大环境生你，最易招贵人与好人缘。\n` +
+              `✦ 谈判《${good.name}》（次吉）：${good.colors} —— 商务沟通、合作洽谈首选。\n` +
+              `✦ 奋斗《${mid.name}》（平）：${mid.colors} —— 适合拼业绩、攻坚进财。\n` +
+              `✦ 尽量避开《${avoid.name}》：${avoid.colors}。\n` +
+              `✦ ${dayLabel}特吉生肖：${w.zodiacLuck.best.join('、')}；需要注意：${w.zodiacLuck.caution.join('、')}。`;
+          }
+        }
+
+        // 3. 签约 / 合作 / 事业 / 面试
+        if (/签约|合作|面试|工作|事业/.test(q)) {
+          const careerScore = dimMap['事业'] ?? personal.overall;
+          return `${name}安好，老夫结合你的生辰档案与${dayLabel}黄历（${dateKey} · ${almanac.jianchuName}）为你推演：\n\n` +
+            `✦ 事业气场：${dayLabel}综合 ${personal.overall} 分，事业指数【${careerScore} 分】（${personal.keyword}）。\n` +
+            `✦ 黄历参考：${dayLabel}宜「${almanac.yi.slice(0, 4).join('、')}」，忌「${almanac.ji.slice(0, 3).join('、')}」。\n` +
+            `✦ 优选白天吉时：${goodHours.join(' / ')}；谈事可优先面向【${almanac.caishen}】（财神位），并留意「${almanac.chongSha}」。`;
+        }
+
+        // 4. 感情 / 约会 / 表白
+        if (/感情|约会|表白|桃花|恋爱/.test(q)) {
+          const loveScore = dimMap['感情'] ?? personal.overall;
+          return `${name}安好，老夫观你${dayLabel}（${dateKey}）情感星象：\n\n` +
+            `✦ 感情指数：${loveScore} 分｜人际指数：${dimMap['人际']} 分｜喜神方位在【${almanac.xishen}】。\n` +
+            `✦ 相处建议：${loveScore >= 80 ? '情感共振度很高，适合主动邀约、坦诚表达心意或安排轻松的晚餐散步。' : '节奏偏温和，重在倾听与松弛陪伴，少一点猜忌就能让关系稳稳升温。'}\n` +
+            `✦ 推荐见面吉时：${goodHours.slice(0, 2).join(' / ')}。`;
+        }
+
+        // 5. 财神 / 吉时 / 方位 / 出行
+        if (/财神|吉时|方位|出行|搬家/.test(q)) {
+          return `${dayLabel}（${dateKey} · ${almanac.lunar}）财神坐落【${almanac.caishen}】，喜神在【${almanac.xishen}】，冲煞为「${almanac.chongSha}」，日纳音「${almanac.nayin}」。\n\n` +
+            `✦ 白天推荐黄道吉时：${goodHours.join('、')}。\n` +
+            `✦ 实操建议：把重要洽谈、出门或决策安排在上述吉时，并避开冲煞方向即可。`;
+        }
+
+        // 6. 综合日运与黄历解读
+        return `${name}安好，老夫已为你合参${dayLabel}（${dateKey}）的「个人日运 × 老黄历」：\n\n` +
+          `1. 个人气场：${dayLabel}综合 ${personal.overall} 分，关键词【${personal.keyword}】，其中「${topDim.label}」最旺（${topDim.score}分）。\n` +
+          `2. 天时黄历：${almanac.lunar}（${almanac.ganzhiText} · ${almanac.jianchuName}），宜「${almanac.yi.slice(0, 3).join('、')}」，忌「${almanac.ji.slice(0, 3).join('、')}」。\n` +
+          `3. 行动建议：${personal.summary} 优先借用白天吉时 ${goodHours[0]} 推进核心事务。`;
       }
-      if (q.includes('签约') || q.includes('合作')) {
-        return `${name}安好，老夫结合你的生辰档案与今日黄历（${almanac.jianchuName}）为你推演：\n\n` +
-          `✦ 今日个人综合分 ${personal.overall} 分，最强维度为【${topDim.label} ${topDim.score}分】。\n` +
-          `✦ 今日黄历宜「${almanac.yi.slice(0, 4).join('、')}」，谈合作签约建议选在黄道吉时：${goodHours.join(' / ')}。\n` +
-          `✦ 方位助力：财神在【${almanac.caishen}】，留意「${almanac.chongSha}」，保持清晰条款即是稳妥上策。`;
-      }
-      if (q.includes('财神') || q.includes('吉时') || q.includes('方位')) {
-        return `今日财神坐落【${almanac.caishen}】，喜神在【${almanac.xishen}】，日纳音「${almanac.nayin}」。\n\n` +
-          `✦ 今日推荐黄金吉时：${goodHours.join('、')}。\n` +
-          `✦ 实操建议：把重要洽谈、汇报或决策放在上述吉时，工位或出行朝向【${almanac.caishen}】更易借势。`;
-      }
-      return `${name}安好，老夫已为你合参「个人日运 × 今日黄历」：\n\n` +
-        `1. 个人气场：今日综合 ${personal.overall} 分，关键词【${personal.keyword}】，其中「${topDim.label}」最旺（${topDim.score}分）。\n` +
-        `2. 天时黄历：${almanac.lunar}（${almanac.ganzhiText} · ${almanac.jianchuName}），宜「${almanac.yi.slice(0, 3).join('、')}」，忌「${almanac.ji.slice(0, 3).join('、')}」。\n` +
-        `3. 行动建议：${personal.summary} 优先借用 ${goodHours[0]} 推进核心事务。`;
     }
 
     if (tab === 'bazi' && ctx) {
