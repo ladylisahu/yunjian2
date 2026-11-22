@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>水镜运见 · yunjians.com — 东方星象科技 · 运势 · 八字紫微 · 复盘对账</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B1325'/%3E%3Crect x='4' y='4' width='56' height='56' rx='11' fill='none' stroke='%23E5B96B' stroke-width='2.5'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-size='26' fill='%23E5B96B' font-family='serif'%3E運%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- 科技星象动态背景 -->
+  <div class="cosmic-bg" aria-hidden="true">
+    <div class="cosmic-grid"></div>
+    <div class="astrolabe-ring ring-1"></div>
+    <div class="astrolabe-ring ring-2"></div>
+    <div class="cosmic-glow glow-cyan"></div>
+    <div class="cosmic-glow glow-gold"></div>
+  </div>
+
+  <!-- 顶部导航栏 -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#today" class="brand" data-tab="today">
+        <span class="brand-seal" aria-hidden="true">水鏡</span>
+        <div class="brand-text">
+          <div class="brand-name-row">
+            <span class="brand-name">水镜运见</span>
+            <span class="ai-chip">YUNJIANS 2.0</span>
+          </div>
+          <span class="brand-sub">东方星象科技 · 确定性推演 · 水镜 AI</span>
+        </div>
+      </a>
+
+      <nav class="main-nav" aria-label="主导航">
+        <button class="nav-btn active" data-tab="today">今日运势 · 黄历</button>
+        <button class="nav-btn" data-tab="bazi">八字紫微 · 大运</button>
+        <button class="nav-btn" data-tab="trends">趋势 · 星座榜</button>
+        <button class="nav-btn" data-tab="compatibility">缘分合盘</button>
+        <button class="nav-btn" data-tab="divination">灵签 · 塔罗</button>
+        <button class="nav-btn" data-tab="review">复盘对账</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 顶部实时天象监测条 -->
+  <div class="today-ticker">
+    <div class="container ticker-inner">
+      <div class="ticker-left">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <div class="ticker-date" id="tickerDate">正在同步天干地支历法矩阵...</div>
+      </div>
+      <div class="ticker-meta" id="tickerMeta"></div>
+    </div>
+  </div>
+
+  <!-- 全局个人生辰档案条（免登录本地保存 · 一次建档全站联动） -->
+  <div class="profile-strip-wrap">
+    <div class="container">
+      <div class="profile-strip">
+        <div class="profile-strip-info">
+          <span class="badge badge-gold" id="profileModeBadge">演示档案</span>
+          <span class="profile-summary-text" id="profileSummaryText">小运 · 乾造 · 1995-08-18 · 巳时 · 北京</span>
+        </div>
+        <button class="btn btn-outline btn-sm" id="toggleProfileEditorBtn">修改我的生辰档案</button>
+      </div>
+
+      <form id="profileEditorForm" class="card profile-editor hidden">
+        <div class="profile-editor-head">
+          <div>
+            <strong>建立你的专属命盘档案（免登录 · 仅存本机浏览器）</strong>
+            <span class="muted-note">保存后，今日日运、八字紫微、流年大运、趋势曲线、复盘对账与水镜 AI 将全站同步联动。</span>
+          </div>
+          <button type="button" class="icon-btn" id="closeProfileEditorBtn" title="收起">✕</button>
+        </div>
+        <div class="profile-form-grid">
+          <div class="form-group">
+            <label for="profName">姓名 / 昵称</label>
+            <input type="text" id="profName" class="input-field" placeholder="例如：小运" required />
+          </div>
+          <div class="form-group">
+            <label for="profGender">性别</label>
+            <select id="profGender" class="input-field">
+              <option value="male">乾造（男）</option>
+              <option value="female">坤造（女）</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="profBirthDate">出生公历日期</label>
+            <input type="date" id="profBirthDate" class="input-field" required />
+          </div>
+          <div class="form-group">
+            <label for="profBirthHour">出生时辰</label>
+            <select id="profBirthHour" class="input-field">
+              <option value="0">子时 (23:00-01:00)</option>
+              <option value="1">丑时 (01:00-03:00)</option>
+              <option value="2">寅时 (03:00-05:00)</option>
+              <option value="3">卯时 (05:00-07:00)</option>
+              <option value="4">辰时 (07:00-09:00)</option>
+              <option value="5">巳时 (09:00-11:00)</option>
+              <option value="6">午时 (11:00-13:00)</option>
+              <option value="7">未时 (13:00-15:00)</option>
+              <option value="8">申时 (15:00-17:00)</option>
+              <option value="9">酉时 (17:00-19:00)</option>
+              <option value="10">戌时 (19:00-21:00)</option>
+              <option value="11">亥时 (21:00-23:00)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="profBirthPlace">出生地</label>
+            <input type="text" id="profBirthPlace" class="input-field" placeholder="例如：北京" />
+          </div>
+          <div class="form-group form-submit">
+            <button type="submit" class="btn btn-primary">保存并全站同步</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 主内容区 -->
+  <main class="container main-content">
+
+    <!-- ==================== 1. 今日运势 · 老黄历 ==================== -->
+    <section id="tab-today" class="tab-panel active">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">PERSONAL FORTUNE &amp; ALMANAC</span>
+          <h1>今日专属运势 &amp; 智能老黄历</h1>
+          <p class="section-desc">确定性引擎按「生辰档案 × 日期」推演（同人同日结果恒定），融合传统干支黄历与十二时辰吉凶。</p>
+        </div>
+        <div class="head-actions">
+          <div class="date-controls">
+            <button class="btn btn-ghost btn-sm" id="prevDayBtn">← 前日</button>
+            <input type="date" id="almanacDateInput" class="input-date" aria-label="选择日期" />
+            <button class="btn btn-ghost btn-sm" id="nextDayBtn">次日 →</button>
+            <button class="btn btn-outline btn-sm" id="todayBtn">回到今日</button>
+          </div>
+          <button class="btn btn-ai btn-sm js-ask-ai" data-context="today">✦ 水镜先生 AI 解读今日</button>
+        </div>
+      </div>
+
+      <!-- 个人今日五维运势总览 -->
+      <div class="card personal-fortune-card">
+        <div class="pf-left">
+          <div class="pf-score-ring">
+            <span class="pf-score-num" id="pfOverallScore">86</span>
+            <span class="pf-score-label">综合运势</span>
+          </div>
+          <span class="badge badge-gold" id="pfKeyword">顺势破局</span>
+        </div>
+        <div class="pf-right">
+          <div class="card-header-row" style="margin-bottom: 10px;">
+            <h2 id="pfTitle">小运 · 今日能量雷达</h2>
+            <button class="btn btn-ghost btn-sm" id="goReviewFromTodayBtn">今晚去复盘对账 →</button>
+          </div>
+          <p class="pf-summary" id="pfSummary"></p>
+          <div class="pf-dims-grid" id="pfDimsGrid"></div>
+        </div>
+      </div>
+
+      <!-- 老黄历主体 -->
+      <div class="almanac-grid">
+        <div class="card almanac-hero-card">
+          <div class="almanac-hero-top">
+            <span class="badge badge-cyan" id="almWeekday">星期日</span>
+            <span class="badge badge-gold" id="almSolarTerm">小雪</span>
+          </div>
+          <div class="almanac-day-num" id="almDayNum">22</div>
+          <div class="almanac-gregorian" id="almGregorian">2026年 11月</div>
+          <div class="almanac-lunar" id="almLunar">农历十月十四</div>
+          <div class="almanac-ganzhi" id="almGanzhi">丙午年 · 己亥月 · 庚子日</div>
+          <div class="almanac-zodiac-row">
+            <span id="almZodiac">生肖：马</span>
+            <span class="dot">·</span>
+            <span id="almConstellation">射手座</span>
+          </div>
+        </div>
+
+        <div class="almanac-details">
+          <div class="card yiji-card">
+            <div class="yiji-row">
+              <div class="yiji-label yi-label">宜</div>
+              <div class="yiji-tags" id="almYi"></div>
+            </div>
+            <div class="divider"></div>
+            <div class="yiji-row">
+              <div class="yiji-label ji-label">忌</div>
+              <div class="yiji-tags" id="almJi"></div>
+            </div>
+          </div>
+
+          <div class="meta-cards-row">
+            <div class="card mini-card">
+              <span class="mini-label">今日冲煞</span>
+              <strong class="mini-value" id="almChongSha">—</strong>
+            </div>
+            <div class="card mini-card">
+              <span class="mini-label">财神方位</span>
+              <strong class="mini-value" id="almCaishen">—</strong>
+            </div>
+            <div class="card mini-card">
+              <span class="mini-label">喜神方位</span>
+              <strong class="mini-value" id="almXishen">—</strong>
+            </div>
+            <div class="card mini-card">
+              <span class="mini-label">五行纳音</span>
+              <strong class="mini-value" id="almNayin">—</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 每日五行穿衣搭配指南 -->
+      <div class="card wardrobe-card">
+        <div class="card-header-row">
+          <div>
+            <h2>每日五行穿衣指南</h2>
+            <span class="muted-note" id="wardrobeSubtitle">按当日地支五行生克推演 · 切换上方日期自动同步</span>
+          </div>
+          <span class="badge badge-gold" id="wardrobeDayElBadge">当日五行：水</span>
+        </div>
+
+        <div class="wardrobe-list" id="wardrobeList"></div>
+
+        <div class="wardrobe-zodiac-bar" id="wardrobeZodiacBar"></div>
+      </div>
+
+      <div class="card hours-card">
+        <div class="card-header-row">
+          <h2>十二时辰黄道吉凶</h2>
+          <span class="muted-note">实时定位当前时辰 · 绿色为黄道吉时</span>
+        </div>
+        <div class="hours-grid" id="almHoursGrid"></div>
+      </div>
+    </section>
+
+    <!-- ==================== 2. 八字紫微 · 大运流年 ==================== -->
+    <section id="tab-bazi" class="tab-panel">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">NATAL MATRIX · ZIWEI · DAYUN</span>
+          <h1>八字排盘 · 紫微主星 · 大运流年</h1>
+          <p class="section-desc">自动读取你的生辰档案，完整呈现四柱五行、日主命格、紫微命宫主星及近 5 年流年与人生大运。</p>
+        </div>
+        <button class="btn btn-ai btn-sm js-ask-ai" data-context="bazi">✦ 请水镜先生 AI 深度解盘</button>
+      </div>
+
+      <div class="bazi-result">
+        <div class="card">
+          <div class="card-header-row">
+            <h2>四柱八字命盘</h2>
+            <span class="badge badge-cyan" id="baziSummaryBadge">乾造 · 属猪</span>
+          </div>
+          <div class="pillars-grid" id="pillarsGrid"></div>
+        </div>
+
+        <div class="two-col-grid">
+          <div class="card">
+            <h2>五行能量频谱</h2>
+            <div class="wuxing-bars" id="wuxingBars"></div>
+            <p class="analysis-note" id="wuxingNote"></p>
+          </div>
+
+          <div class="card ziwei-card">
+            <div class="card-header-row">
+              <h2>紫微命宫主星</h2>
+              <span class="badge badge-gold" id="ziweiCategory">合作型</span>
+            </div>
+            <div class="ziwei-star-title" id="ziweiStarName">天同星</div>
+            <p class="ziwei-keywords" id="ziweiKeywords"></p>
+            <p class="analysis-note" id="ziweiDesc"></p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header-row">
+            <h2 id="dayMasterTitle">日主命格解析</h2>
+            <span class="badge badge-gold" id="dayMasterElement">五行属金</span>
+          </div>
+          <div class="daymaster-grid" id="dayMasterGrid"></div>
+        </div>
+
+        <!-- 流年运势（近5年） -->
+        <div class="card">
+          <div class="card-header-row">
+            <h2>近五年流年运势推演</h2>
+            <span class="muted-note">自动标注今年流年 · 宏观节拍参考</span>
+          </div>
+          <div class="liunian-grid" id="liunianGrid"></div>
+        </div>
+
+        <!-- 人生大运时间轴 -->
+        <div class="card">
+          <div class="card-header-row">
+            <h2>人生大运时间轴</h2>
+            <span class="badge badge-cyan" id="currentAgeBadge">当前虚岁</span>
+          </div>
+          <div class="dayun-grid" id="dayunGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 3. 趋势 · 十二星座榜 ==================== -->
+    <section id="tab-trends" class="tab-panel">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">TREND TELEMETRY &amp; ZODIAC RANKING</span>
+          <h1>个人十日趋势 &amp; 十二星座今日榜</h1>
+          <p class="section-desc">可视化查看前后 10 日个人运势波动曲线，并与今日十二星座好运排行榜联动速查。</p>
+        </div>
+        <button class="btn btn-ai btn-sm js-ask-ai" data-context="trends">✦ AI 剖析未来走势</button>
+      </div>
+
+      <!-- 个人 10 日趋势曲线 -->
+      <div class="card trend-card">
+        <div class="card-header-row">
+          <h2>个人运势十日曲线（前 3 日 ~ 后 6 日）</h2>
+          <span class="muted-note" id="trendHighlightNote">点击节点查看当日要点</span>
+        </div>
+        <div class="trend-chart-wrap" id="trendChartWrap"></div>
+        <div class="trend-detail-strip" id="trendDetailStrip"></div>
+      </div>
+
+      <!-- 十二星座排行榜 + 详情 -->
+      <div class="trends-zodiac-layout">
+        <div class="card">
+          <div class="card-header-row">
+            <h2>十二星座今日好运榜</h2>
+            <span class="muted-note">点击任意星座查看详情</span>
+          </div>
+          <div class="ranking-list" id="zodiacRankingList"></div>
+        </div>
+
+        <div class="card horoscope-detail" id="horoscopeDetail">
+          <div class="horo-header">
+            <div class="horo-sign-badge">
+              <span class="horo-glyph" id="horoGlyph">♈</span>
+              <div>
+                <h2 id="horoName">白羊座</h2>
+                <span class="muted-note" id="horoDateRange">3.21-4.19 · 火象星座</span>
+              </div>
+            </div>
+            <div class="horo-lucky-pills" id="horoLuckyPills"></div>
+          </div>
+          <div class="horo-quote" id="horoQuote"></div>
+          <div class="horo-scores" id="horoScores"></div>
+          <div class="horo-advice-grid" id="horoAdviceGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 4. 缘分合盘 ==================== -->
+    <section id="tab-compatibility" class="tab-panel">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">SYNASTRY MATCH ENGINE</span>
+          <h1>缘分合盘速配</h1>
+          <p class="section-desc">融合西洋黄道相位与东方地支三合六合模型，即时测算双人共振指数。</p>
+        </div>
+        <div class="head-actions">
+          <div class="segmented-control" id="compatModeSwitch">
+            <button class="seg-btn active" data-mode="zodiac">星座配对</button>
+            <button class="seg-btn" data-mode="shengxiao">生肖配对</button>
+          </div>
+          <button class="btn btn-ai btn-sm js-ask-ai" data-context="compatibility">✦ AI 剖析相处之道</button>
+        </div>
+      </div>
+
+      <div class="card compat-card">
+        <div class="compat-inputs">
+          <div class="form-group">
+            <label for="compatA">甲方</label>
+            <select id="compatA" class="input-field"></select>
+          </div>
+          <div class="compat-heart" aria-hidden="true">✦</div>
+          <div class="form-group">
+            <label for="compatB">乙方</label>
+            <select id="compatB" class="input-field"></select>
+          </div>
+          <div class="form-group form-submit">
+            <button class="btn btn-primary" id="compatCalcBtn">测算共振</button>
+          </div>
+        </div>
+
+        <div class="compat-result" id="compatResult">
+          <div class="compat-score-ring">
+            <span class="compat-score-num" id="compatScore">95</span>
+            <span class="compat-score-unit">分</span>
+          </div>
+          <div class="compat-info">
+            <div class="compat-title-row">
+              <h2 id="compatPairTitle">白羊座 × 狮子座</h2>
+              <span class="badge badge-gold" id="compatTag">天作之合</span>
+            </div>
+            <p class="compat-summary" id="compatSummary"></p>
+            <div class="compat-tips">
+              <div class="tip-box">
+                <strong>合拍亮点</strong>
+                <p id="compatPros"></p>
+              </div>
+              <div class="tip-box">
+                <strong>相处建议</strong>
+                <p id="compatAdvice"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 5. 灵签 · 塔罗 ==================== -->
+    <section id="tab-divination" class="tab-panel">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">QUANTUM ORACLE &amp; TAROT</span>
+          <h1>水镜问卜 · 灵签与塔罗</h1>
+          <p class="section-desc">静心默念心中所惑，支持东方水镜灵签及塔罗「单张指引 / 三张时间阵」，结果直连水镜 AI 深度解说。</p>
+        </div>
+        <div class="head-actions">
+          <div class="segmented-control" id="divModeSwitch">
+            <button class="seg-btn active" data-mode="qian">水镜灵签</button>
+            <button class="seg-btn" data-mode="tarot">每日塔罗</button>
+          </div>
+          <button class="btn btn-ai btn-sm js-ask-ai" data-context="divination">✦ 请水镜先生 AI 解签</button>
+        </div>
+      </div>
+
+      <!-- 水镜灵签面板 -->
+      <div id="divQianPanel" class="div-panel active">
+        <div class="card oracle-stage">
+          <div class="qian-cylinder" id="qianCylinder">
+            <div class="qian-sticks">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="qian-body">水鏡靈籤</div>
+          </div>
+          <p class="oracle-prompt">心诚则灵 · 默念心中所惑后点击求签</p>
+          <button class="btn btn-primary btn-lg" id="drawQianBtn">摇签问卜</button>
+        </div>
+
+        <div class="card oracle-result hidden" id="qianResultCard">
+          <div class="qian-result-head">
+            <div>
+              <span class="badge badge-gold" id="qianRank">上上签</span>
+              <span class="muted-note" id="qianNumber">第一签</span>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-ai btn-sm js-ask-ai" data-context="divination">✦ AI 深度解签</button>
+              <button class="btn btn-ghost btn-sm" id="redrawQianBtn">再求一签</button>
+            </div>
+          </div>
+          <h2 class="qian-title" id="qianTitle">潜龙出渊</h2>
+          <blockquote class="qian-poem" id="qianPoem"></blockquote>
+          <div class="qian-explain-grid">
+            <div class="tip-box">
+              <strong>白话解签</strong>
+              <p id="qianMeaning"></p>
+            </div>
+            <div class="tip-box">
+              <strong>运势指引</strong>
+              <p id="qianGuide"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 每日塔罗面板（支持抽1张 & 抽3张过去/现在/未来） -->
+      <div id="divTarotPanel" class="div-panel">
+        <div class="card oracle-stage">
+          <p class="oracle-prompt">默念想问之事，选择「单张今日指引」或「三张时间牌阵（过去·现在·未来）」</p>
+          <div class="tarot-actions">
+            <button class="btn btn-primary" id="drawTarot1Btn">✦ 抽 1 张 · 今日指引</button>
+            <button class="btn btn-outline" id="drawTarot3Btn">✦ 抽 3 张 · 过去 / 现在 / 未来</button>
+          </div>
+        </div>
+
+        <div class="tarot-spread-grid hidden" id="tarotSpreadGrid"></div>
+      </div>
+    </section>
+
+    <!-- ==================== 6. 复盘对账（特色留存闭环） ==================== -->
+    <section id="tab-review" class="tab-panel">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">EMPIRICAL CHECK-IN · 不是玄学，是复盘</span>
+          <h1>每日复盘对账</h1>
+          <p class="section-desc">每晚记录一下真实体感分，与白天系统预测的综合分对照。连续对账，看清真正适合自己的生活节奏。</p>
+        </div>
+        <button class="btn btn-ai btn-sm js-ask-ai" data-context="review">✦ 水镜先生 AI 点评复盘</button>
+      </div>
+
+      <div class="review-layout">
+        <!-- 左侧打卡表单 -->
+        <div class="card">
+          <div class="card-header-row">
+            <h2>今日对账打卡</h2>
+            <span class="badge badge-cyan" id="reviewTodayDate">2026-11-22</span>
+          </div>
+
+          <div class="review-compare-banner">
+            <div>
+              <span class="mini-label">白天预测综合分</span>
+              <strong class="review-big-num cyan" id="reviewPredictedVal">86</strong>
+            </div>
+            <div class="review-vs">VS</div>
+            <div>
+              <span class="mini-label">你的真实体感分</span>
+              <strong class="review-big-num gold" id="reviewActualDisplay">82</strong>
+            </div>
+          </div>
+
+          <form id="reviewForm" class="review-form">
+            <div class="form-group">
+              <label for="reviewActualRange">滑动给今天的真实状态打分（0 - 100）</label>
+              <input type="range" id="reviewActualRange" min="0" max="100" value="82" class="range-slider" />
+            </div>
+
+            <div class="form-group">
+              <label>今日体感标签</label>
+              <div class="mood-chips" id="moodChips">
+                <button type="button" class="mood-chip active" data-mood="顺遂高效">顺遂高效</button>
+                <button type="button" class="mood-chip" data-mood="平稳安逸">平稳安逸</button>
+                <button type="button" class="mood-chip" data-mood="小有惊喜">小有惊喜</button>
+                <button type="button" class="mood-chip" data-mood="略有波折">略有波折</button>
+                <button type="button" class="mood-chip" data-mood="疲惫蓄力">疲惫蓄力</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reviewNote">一句话复盘随笔（选填）</label>
+              <textarea id="reviewNote" rows="3" class="input-field" placeholder="例如：上午方案顺利通过，下午少刷手机效率高了很多..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%;">保存今日对账记录</button>
+          </form>
+        </div>
+
+        <!-- 右侧统计与近 90 天历史 -->
+        <div class="review-right-col">
+          <div class="review-stats-row">
+            <div class="card mini-card">
+              <span class="mini-label">累计对账天数</span>
+              <strong class="mini-value" id="statCount">0 天</strong>
+            </div>
+            <div class="card mini-card">
+              <span class="mini-label">预测平均吻合度</span>
+              <strong class="mini-value" id="statAccuracy">—</strong>
+            </div>
+            <div class="card mini-card">
+              <span class="mini-label">历史平均体感分</span>
+              <strong class="mini-value" id="statAvgActual">—</strong>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-row">
+              <h2>对账记录（近 90 条 · 本地保存）</h2>
+              <span class="muted-note">预测分 vs 体感分</span>
+            </div>
+            <div class="checkin-list" id="checkinList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>水镜运见 · yunjians.com</strong>
+        <p>运势分析与占卜内容仅供文化交流、日常复盘与娱乐参考，不构成任何人生、投资、医疗或法律建议。农历与节气为近似推算。</p>
+      </div>
+      <div class="footer-links">
+        <span>本地优先存储 · 免登录保护隐私 · 水镜 AI 引擎</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== 悬浮 AI Agent：水镜先生 ==================== -->
+  <button class="agent-fab" id="agentFab" aria-label="唤醒水镜先生 AI 智能体">
+    <img src="assets/sage-a.jpg" alt="水镜先生 AI 形象" class="agent-fab-avatar js-sage-avatar" />
+    <span class="agent-fab-pill">
+      <span class="pulse-dot"></span>
+      <span>问水镜先生</span>
+    </span>
+  </button>
+
+  <aside class="agent-drawer" id="agentDrawer" aria-hidden="true">
+    <div class="agent-header">
+      <div class="agent-profile">
+        <img src="assets/sage-a.jpg" alt="水镜先生" class="agent-avatar-lg js-sage-avatar" />
+        <div>
+          <div class="agent-title-row">
+            <strong>水镜先生 · AI</strong>
+            <span class="agent-status-tag" id="agentEngineTag">内置推演引擎</span>
+          </div>
+          <span class="agent-context-line" id="agentContextLine">实时感知：今日运势</span>
+        </div>
+      </div>
+      <div class="agent-header-btns">
+        <button class="icon-btn" id="agentSettingsToggle" title="切换形象 / 配置大模型 API">⚙</button>
+        <button class="icon-btn" id="agentCloseBtn" title="收起面板">✕</button>
+      </div>
+    </div>
+
+    <div class="agent-settings hidden" id="agentSettingsPanel">
+      <div class="settings-block">
+        <label class="settings-label">白胡子老者形象切换</label>
+        <div class="avatar-picker" id="avatarPicker">
+          <button class="avatar-opt active" data-avatar="assets/sage-a.jpg">
+            <img src="assets/sage-a.jpg" alt="水墨全息" />
+            <span>水墨全息</span>
+          </button>
+          <button class="avatar-opt" data-avatar="assets/sage-b.jpg">
+            <img src="assets/sage-b.jpg" alt="3D国漫" />
+            <span>3D 国漫</span>
+          </button>
+          <button class="avatar-opt" data-avatar="assets/sage-c.jpg">
+            <img src="assets/sage-c.jpg" alt="科幻插画" />
+            <span>科幻插画</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-block">
+        <label class="settings-label">外接大模型 API（可选 · 留空使用内置智能推演）</label>
+        <input type="text" id="apiBaseUrl" class="input-field input-sm" placeholder="API 地址，如 https://api.deepseek.com/v1" />
+        <input type="password" id="apiKeyInput" class="input-field input-sm" placeholder="API Key（仅存本机浏览器）" />
+        <input type="text" id="apiModelInput" class="input-field input-sm" placeholder="模型名，如 deepseek-chat / gpt-4o-mini" />
+        <div class="settings-actions">
+          <button class="btn btn-primary btn-sm" id="saveApiBtn">保存配置</button>
+          <button class="btn btn-ghost btn-sm" id="clearApiBtn">切回内置引擎</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="agent-messages" id="agentMessages"></div>
+    <div class="agent-quick-prompts" id="agentQuickPrompts"></div>
+
+    <form class="agent-input-bar" id="agentForm">
+      <input type="text" id="agentInput" class="agent-input" placeholder="向水镜先生提问（如：今天适合签约吗？）" autocomplete="off" />
+      <button type="submit" class="btn btn-primary btn-sm">发送</button>
+    </form>
+  </aside>
+
+  <script src="js/calendar.js"></script>
+  <script src="js/bazi.js"></script>
+  <script src="js/horoscope.js"></script>
+  <script src="js/divination.js"></script>
+  <script src="js/fortune.js"></script>
+  <script src="js/agent.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
