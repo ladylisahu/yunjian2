@@ -4,11 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>水镜运见 · yunjians.com — 东方星象科技 · 运势 · 八字紫微 · 复盘对账</title>
+  <meta name="description" content="水镜运见 (Shuijing YunJian) — 融合东方老黄历、每日五行穿衣指南、八字紫微、西洋十二星座、塔罗抽牌、每日复盘对账与白胡子 AI 智者实时解说的轻量东方星象科技站。Eastern Astrology, Five-Element Lucky Colors, BaZi, Daily Horoscope, Tarot & AI Sage." />
+  <meta name="keywords" content="水镜运见,老黄历,每日五行穿衣指南,八字排盘,紫微斗数,十二星座运势,塔罗抽牌,复盘对账,Eastern Astrology,Five Elements Lucky Color,BaZi Calculator,Daily Horoscope,Tarot Reading" />
+  <link rel="canonical" href="https://yunjians.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://yunjians.com/" />
+  <meta property="og:title" content="水镜运见 · Shuijing YunJian — Eastern Astrology, Five-Element Guide & AI Sage" />
+  <meta property="og:description" content="Daily personal fortune, Chinese Almanac, Five-Element Lucky Color Wardrobe, BaZi & Ziwei, Zodiac Ranking, Tarot Spread & Master Shuijing AI." />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B1325'/%3E%3Crect x='4' y='4' width='56' height='56' rx='11' fill='none' stroke='%23E5B96B' stroke-width='2.5'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-size='26' fill='%23E5B96B' font-family='serif'%3E運%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=2.1" />
+  <link rel="stylesheet" href="css/style.css?v=2.2" />
 </head>
 <body>
   <!-- 科技星象动态背景 -->
@@ -27,20 +35,21 @@
         <span class="brand-seal" aria-hidden="true">水鏡</span>
         <div class="brand-text">
           <div class="brand-name-row">
-            <span class="brand-name">水镜运见</span>
+            <span class="brand-name" data-i18n="brandName">水镜运见</span>
             <span class="ai-chip">YUNJIANS 2.0</span>
           </div>
-          <span class="brand-sub">东方星象科技 · 确定性推演 · 水镜 AI</span>
+          <span class="brand-sub" data-i18n="brandSub">东方星象科技 · 确定性推演 · 水镜 AI</span>
         </div>
       </a>
 
       <nav class="main-nav" aria-label="主导航">
-        <button class="nav-btn active" data-tab="today">今日运势 · 黄历</button>
-        <button class="nav-btn" data-tab="bazi">八字紫微 · 大运</button>
-        <button class="nav-btn" data-tab="trends">趋势 · 星座榜</button>
-        <button class="nav-btn" data-tab="compatibility">缘分合盘</button>
-        <button class="nav-btn" data-tab="divination">灵签 · 塔罗</button>
-        <button class="nav-btn" data-tab="review">复盘对账</button>
+        <button class="nav-btn active" data-tab="today" data-i18n="navToday">今日运势 · 黄历</button>
+        <button class="nav-btn" data-tab="bazi" data-i18n="navBazi">八字紫微 · 大运</button>
+        <button class="nav-btn" data-tab="trends" data-i18n="navTrends">趋势 · 星座榜</button>
+        <button class="nav-btn" data-tab="compatibility" data-i18n="navCompat">缘分合盘</button>
+        <button class="nav-btn" data-tab="divination" data-i18n="navDiv">灵签 · 塔罗</button>
+        <button class="nav-btn" data-tab="review" data-i18n="navReview">复盘对账</button>
+        <button class="lang-toggle-btn" id="langToggleBtn" type="button" title="Switch to English">EN</button>
       </nav>
     </div>
   </header>
@@ -64,35 +73,35 @@
           <span class="badge badge-gold" id="profileModeBadge">演示档案</span>
           <span class="profile-summary-text" id="profileSummaryText">小运 · 乾造 · 1995-08-18 · 巳时 · 北京</span>
         </div>
-        <button class="btn btn-outline btn-sm" id="toggleProfileEditorBtn">修改我的生辰档案</button>
+        <button class="btn btn-outline btn-sm" id="toggleProfileEditorBtn" data-i18n="editProfileBtn">修改我的生辰档案</button>
       </div>
 
       <form id="profileEditorForm" class="card profile-editor hidden">
         <div class="profile-editor-head">
           <div>
-            <strong>建立你的专属命盘档案（免登录 · 仅存本机浏览器）</strong>
-            <span class="muted-note">保存后，今日日运、八字紫微、流年大运、趋势曲线、复盘对账与水镜 AI 将全站同步联动。</span>
+            <strong data-i18n="profileEditorTitle">建立你的专属命盘档案（免登录 · 仅存本机浏览器）</strong>
+            <span class="muted-note" data-i18n="profileEditorSub">保存后，今日日运、八字紫微、流年大运、趋势曲线、复盘对账与水镜 AI 将全站同步联动。</span>
           </div>
           <button type="button" class="icon-btn" id="closeProfileEditorBtn" title="收起">✕</button>
         </div>
         <div class="profile-form-grid">
           <div class="form-group">
-            <label for="profName">姓名 / 昵称</label>
+            <label for="profName" data-i18n="lblName">姓名 / 昵称</label>
             <input type="text" id="profName" class="input-field" placeholder="例如：小运" required />
           </div>
           <div class="form-group">
-            <label for="profGender">性别</label>
+            <label for="profGender" data-i18n="lblGender">性别</label>
             <select id="profGender" class="input-field">
-              <option value="male">乾造（男）</option>
-              <option value="female">坤造（女）</option>
+              <option value="male">乾造（男 / Male）</option>
+              <option value="female">坤造（女 / Female）</option>
             </select>
           </div>
           <div class="form-group">
-            <label for="profBirthDate">出生公历日期</label>
+            <label for="profBirthDate" data-i18n="lblBirthDate">出生公历日期</label>
             <input type="date" id="profBirthDate" class="input-field" required />
           </div>
           <div class="form-group">
-            <label for="profBirthHour">出生时辰</label>
+            <label for="profBirthHour" data-i18n="lblBirthHour">出生时辰</label>
             <select id="profBirthHour" class="input-field">
               <option value="0">子时 (23:00-01:00)</option>
               <option value="1">丑时 (01:00-03:00)</option>
@@ -109,11 +118,11 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="profBirthPlace">出生地</label>
+            <label for="profBirthPlace" data-i18n="lblBirthPlace">出生地</label>
             <input type="text" id="profBirthPlace" class="input-field" placeholder="例如：北京" />
           </div>
           <div class="form-group form-submit">
-            <button type="submit" class="btn btn-primary">保存并全站同步</button>
+            <button type="submit" class="btn btn-primary" data-i18n="saveProfileBtn">保存并全站同步</button>
           </div>
         </div>
       </form>
@@ -128,17 +137,17 @@
       <div class="section-head">
         <div>
           <span class="section-kicker">PERSONAL FORTUNE &amp; ALMANAC</span>
-          <h1>今日专属运势 &amp; 智能老黄历</h1>
-          <p class="section-desc">确定性引擎按「生辰档案 × 日期」推演（同人同日结果恒定），融合传统干支黄历与十二时辰吉凶。</p>
+          <h1 data-i18n="todayH1">今日专属运势 &amp; 智能老黄历</h1>
+          <p class="section-desc" data-i18n="todayDesc">确定性引擎按「生辰档案 × 日期」推演（同人同日结果恒定），融合传统干支黄历与十二时辰吉凶。</p>
         </div>
         <div class="head-actions">
           <div class="date-controls">
-            <button class="btn btn-ghost btn-sm" id="prevDayBtn">← 前日</button>
+            <button class="btn btn-ghost btn-sm" id="prevDayBtn" data-i18n="prevDay">← 前日</button>
             <input type="date" id="almanacDateInput" class="input-date" aria-label="选择日期" />
-            <button class="btn btn-ghost btn-sm" id="nextDayBtn">次日 →</button>
-            <button class="btn btn-outline btn-sm" id="todayBtn">回到今日</button>
+            <button class="btn btn-ghost btn-sm" id="nextDayBtn" data-i18n="nextDay">次日 →</button>
+            <button class="btn btn-outline btn-sm" id="todayBtn" data-i18n="backToday">回到今日</button>
           </div>
-          <button class="btn btn-ai btn-sm js-ask-ai" data-context="today">✦ 水镜先生 AI 解读今日</button>
+          <button class="btn btn-ai btn-sm js-ask-ai" data-context="today" data-i18n="askTodayAi">✦ 水镜先生 AI 解读今日</button>
         </div>
       </div>
 
@@ -147,14 +156,14 @@
         <div class="pf-left">
           <div class="pf-score-ring">
             <span class="pf-score-num" id="pfOverallScore">86</span>
-            <span class="pf-score-label">综合运势</span>
+            <span class="pf-score-label" data-i18n="overallLabel">综合运势</span>
           </div>
           <span class="badge badge-gold" id="pfKeyword">顺势破局</span>
         </div>
         <div class="pf-right">
           <div class="card-header-row" style="margin-bottom: 10px;">
             <h2 id="pfTitle">小运 · 今日能量雷达</h2>
-            <button class="btn btn-ghost btn-sm" id="goReviewFromTodayBtn">今晚去复盘对账 →</button>
+            <button class="btn btn-ghost btn-sm" id="goReviewFromTodayBtn" data-i18n="goReviewBtn">今晚去复盘对账 →</button>
           </div>
           <p class="pf-summary" id="pfSummary"></p>
           <div class="pf-dims-grid" id="pfDimsGrid"></div>
@@ -182,31 +191,31 @@
         <div class="almanac-details">
           <div class="card yiji-card">
             <div class="yiji-row">
-              <div class="yiji-label yi-label">宜</div>
+              <div class="yiji-label yi-label" data-i18n="yiLabel">宜</div>
               <div class="yiji-tags" id="almYi"></div>
             </div>
             <div class="divider"></div>
             <div class="yiji-row">
-              <div class="yiji-label ji-label">忌</div>
+              <div class="yiji-label ji-label" data-i18n="jiLabel">忌</div>
               <div class="yiji-tags" id="almJi"></div>
             </div>
           </div>
 
           <div class="meta-cards-row">
             <div class="card mini-card">
-              <span class="mini-label">今日冲煞</span>
+              <span class="mini-label" data-i18n="chongShaLbl">今日冲煞</span>
               <strong class="mini-value" id="almChongSha">—</strong>
             </div>
             <div class="card mini-card">
-              <span class="mini-label">财神方位</span>
+              <span class="mini-label" data-i18n="caishenLbl">财神方位</span>
               <strong class="mini-value" id="almCaishen">—</strong>
             </div>
             <div class="card mini-card">
-              <span class="mini-label">喜神方位</span>
+              <span class="mini-label" data-i18n="xishenLbl">喜神方位</span>
               <strong class="mini-value" id="almXishen">—</strong>
             </div>
             <div class="card mini-card">
-              <span class="mini-label">五行纳音</span>
+              <span class="mini-label" data-i18n="nayinLbl">五行纳音</span>
               <strong class="mini-value" id="almNayin">—</strong>
             </div>
           </div>
@@ -217,7 +226,7 @@
       <div class="card wardrobe-card">
         <div class="card-header-row">
           <div>
-            <h2>每日五行穿衣指南</h2>
+            <h2 data-i18n="wardrobeTitle">每日五行穿衣指南</h2>
             <span class="muted-note" id="wardrobeSubtitle">按当日地支五行生克推演 · 切换上方日期自动同步</span>
           </div>
           <span class="badge badge-gold" id="wardrobeDayElBadge">当日五行：水</span>
@@ -230,8 +239,8 @@
 
       <div class="card hours-card">
         <div class="card-header-row">
-          <h2>十二时辰黄道吉凶</h2>
-          <span class="muted-note">实时定位当前时辰 · 绿色为黄道吉时</span>
+          <h2 data-i18n="hoursTitle">十二时辰黄道吉凶</h2>
+          <span class="muted-note" data-i18n="hoursNote">实时定位当前时辰 · 绿色为黄道吉时</span>
         </div>
         <div class="hours-grid" id="almHoursGrid"></div>
       </div>
@@ -242,16 +251,16 @@
       <div class="section-head">
         <div>
           <span class="section-kicker">NATAL MATRIX · ZIWEI · DAYUN</span>
-          <h1>八字排盘 · 紫微主星 · 大运流年</h1>
-          <p class="section-desc">自动读取你的生辰档案，完整呈现四柱五行、日主命格、紫微命宫主星及近 5 年流年与人生大运。</p>
+          <h1 data-i18n="baziH1">八字排盘 · 紫微主星 · 大运流年</h1>
+          <p class="section-desc" data-i18n="baziDesc">自动读取你的生辰档案，完整呈现四柱五行、日主命格、紫微命宫主星及近 5 年流年与人生大运。</p>
         </div>
-        <button class="btn btn-ai btn-sm js-ask-ai" data-context="bazi">✦ 请水镜先生 AI 深度解盘</button>
+        <button class="btn btn-ai btn-sm js-ask-ai" data-context="bazi" data-i18n="askBaziAi">✦ 请水镜先生 AI 深度解盘</button>
       </div>
 
       <div class="bazi-result">
         <div class="card">
           <div class="card-header-row">
-            <h2>四柱八字命盘</h2>
+            <h2 data-i18n="pillarsTitle">四柱八字命盘</h2>
             <span class="badge badge-cyan" id="baziSummaryBadge">乾造 · 属猪</span>
           </div>
           <div class="pillars-grid" id="pillarsGrid"></div>
@@ -259,14 +268,14 @@
 
         <div class="two-col-grid">
           <div class="card">
-            <h2>五行能量频谱</h2>
+            <h2 data-i18n="wuxingTitle">五行能量频谱</h2>
             <div class="wuxing-bars" id="wuxingBars"></div>
             <p class="analysis-note" id="wuxingNote"></p>
           </div>
 
           <div class="card ziwei-card">
             <div class="card-header-row">
-              <h2>紫微命宫主星</h2>
+              <h2 data-i18n="ziweiTitle">紫微命宫主星</h2>
               <span class="badge badge-gold" id="ziweiCategory">合作型</span>
             </div>
             <div class="ziwei-star-title" id="ziweiStarName">天同星</div>
@@ -286,8 +295,8 @@
         <!-- 流年运势（近5年） -->
         <div class="card">
           <div class="card-header-row">
-            <h2>近五年流年运势推演</h2>
-            <span class="muted-note">自动标注今年流年 · 宏观节拍参考</span>
+            <h2 data-i18n="liunianTitle">近五年流年运势推演</h2>
+            <span class="muted-note" data-i18n="liunianNote">自动标注今年流年 · 宏观节拍参考</span>
           </div>
           <div class="liunian-grid" id="liunianGrid"></div>
         </div>
@@ -295,7 +304,7 @@
         <!-- 人生大运时间轴 -->
         <div class="card">
           <div class="card-header-row">
-            <h2>人生大运时间轴</h2>
+            <h2 data-i18n="dayunTitle">人生大运时间轴</h2>
             <span class="badge badge-cyan" id="currentAgeBadge">当前虚岁</span>
           </div>
           <div class="dayun-grid" id="dayunGrid"></div>
@@ -308,17 +317,17 @@
       <div class="section-head">
         <div>
           <span class="section-kicker">TREND TELEMETRY &amp; ZODIAC RANKING</span>
-          <h1>个人十日趋势 &amp; 十二星座今日榜</h1>
-          <p class="section-desc">可视化查看前后 10 日个人运势波动曲线，并与今日十二星座好运排行榜联动速查。</p>
+          <h1 data-i18n="trendsH1">个人十日趋势 &amp; 十二星座今日榜</h1>
+          <p class="section-desc" data-i18n="trendsDesc">可视化查看前后 10 日个人运势波动曲线，并与今日十二星座好运排行榜联动速查。</p>
         </div>
-        <button class="btn btn-ai btn-sm js-ask-ai" data-context="trends">✦ AI 剖析未来走势</button>
+        <button class="btn btn-ai btn-sm js-ask-ai" data-context="trends" data-i18n="askTrendsAi">✦ AI 剖析未来走势</button>
       </div>
 
       <!-- 个人 10 日趋势曲线 -->
       <div class="card trend-card">
         <div class="card-header-row">
-          <h2>个人运势十日曲线（前 3 日 ~ 后 6 日）</h2>
-          <span class="muted-note" id="trendHighlightNote">点击节点查看当日要点</span>
+          <h2 data-i18n="trendChartTitle">个人运势十日曲线（前 3 日 ~ 后 6 日）</h2>
+          <span class="muted-note" id="trendHighlightNote" data-i18n="trendHint">点击节点查看当日要点</span>
         </div>
         <div class="trend-chart-wrap" id="trendChartWrap"></div>
         <div class="trend-detail-strip" id="trendDetailStrip"></div>
@@ -328,8 +337,8 @@
       <div class="trends-zodiac-layout">
         <div class="card">
           <div class="card-header-row">
-            <h2>十二星座今日好运榜</h2>
-            <span class="muted-note">点击任意星座查看详情</span>
+            <h2 data-i18n="zodiacRankTitle">十二星座今日好运榜</h2>
+            <span class="muted-note" data-i18n="zodiacRankNote">点击任意星座查看详情</span>
           </div>
           <div class="ranking-list" id="zodiacRankingList"></div>
         </div>
@@ -357,31 +366,31 @@
       <div class="section-head">
         <div>
           <span class="section-kicker">SYNASTRY MATCH ENGINE</span>
-          <h1>缘分合盘速配</h1>
-          <p class="section-desc">融合西洋黄道相位与东方地支三合六合模型，即时测算双人共振指数。</p>
+          <h1 data-i18n="compatH1">缘分合盘速配</h1>
+          <p class="section-desc" data-i18n="compatDesc">融合西洋黄道相位与东方地支三合六合模型，即时测算双人共振指数。</p>
         </div>
         <div class="head-actions">
           <div class="segmented-control" id="compatModeSwitch">
-            <button class="seg-btn active" data-mode="zodiac">星座配对</button>
-            <button class="seg-btn" data-mode="shengxiao">生肖配对</button>
+            <button class="seg-btn active" data-mode="zodiac" data-i18n="modeZodiac">星座配对</button>
+            <button class="seg-btn" data-mode="shengxiao" data-i18n="modeShengxiao">生肖配对</button>
           </div>
-          <button class="btn btn-ai btn-sm js-ask-ai" data-context="compatibility">✦ AI 剖析相处之道</button>
+          <button class="btn btn-ai btn-sm js-ask-ai" data-context="compatibility" data-i18n="askCompatAi">✦ AI 剖析相处之道</button>
         </div>
       </div>
 
       <div class="card compat-card">
         <div class="compat-inputs">
           <div class="form-group">
-            <label for="compatA">甲方</label>
+            <label for="compatA" data-i18n="partyA">甲方</label>
             <select id="compatA" class="input-field"></select>
           </div>
           <div class="compat-heart" aria-hidden="true">✦</div>
           <div class="form-group">
-            <label for="compatB">乙方</label>
+            <label for="compatB" data-i18n="partyB">乙方</label>
             <select id="compatB" class="input-field"></select>
           </div>
           <div class="form-group form-submit">
-            <button class="btn btn-primary" id="compatCalcBtn">测算共振</button>
+            <button class="btn btn-primary" id="compatCalcBtn" data-i18n="calcCompatBtn">测算共振</button>
           </div>
         </div>
 
@@ -398,11 +407,11 @@
             <p class="compat-summary" id="compatSummary"></p>
             <div class="compat-tips">
               <div class="tip-box">
-                <strong>合拍亮点</strong>
+                <strong data-i18n="prosTitle">合拍亮点</strong>
                 <p id="compatPros"></p>
               </div>
               <div class="tip-box">
-                <strong>相处建议</strong>
+                <strong data-i18n="adviceTitle">相处建议</strong>
                 <p id="compatAdvice"></p>
               </div>
             </div>
@@ -416,15 +425,15 @@
       <div class="section-head">
         <div>
           <span class="section-kicker">QUANTUM ORACLE &amp; TAROT</span>
-          <h1>水镜问卜 · 灵签与塔罗</h1>
-          <p class="section-desc">静心默念心中所惑，支持东方水镜灵签及塔罗「单张指引 / 三张时间阵」，结果直连水镜 AI 深度解说。</p>
+          <h1 data-i18n="divH1">水镜问卜 · 灵签与塔罗</h1>
+          <p class="section-desc" data-i18n="divDesc">静心默念心中所惑，支持东方水镜灵签及塔罗「单张指引 / 三张时间阵」，结果直连水镜 AI 深度解说。</p>
         </div>
         <div class="head-actions">
           <div class="segmented-control" id="divModeSwitch">
-            <button class="seg-btn active" data-mode="qian">水镜灵签</button>
-            <button class="seg-btn" data-mode="tarot">每日塔罗</button>
+            <button class="seg-btn active" data-mode="qian" data-i18n="modeQian">水镜灵签</button>
+            <button class="seg-btn" data-mode="tarot" data-i18n="modeTarot">每日塔罗</button>
           </div>
-          <button class="btn btn-ai btn-sm js-ask-ai" data-context="divination">✦ 请水镜先生 AI 解签</button>
+          <button class="btn btn-ai btn-sm js-ask-ai" data-context="divination" data-i18n="askDivAi">✦ 请水镜先生 AI 解签</button>
         </div>
       </div>
 
@@ -437,8 +446,8 @@
             </div>
             <div class="qian-body">水鏡靈籤</div>
           </div>
-          <p class="oracle-prompt">心诚则灵 · 默念心中所惑后点击求签</p>
-          <button class="btn btn-primary btn-lg" id="drawQianBtn">摇签问卜</button>
+          <p class="oracle-prompt" data-i18n="qianPrompt">心诚则灵 · 默念心中所惑后点击求签</p>
+          <button class="btn btn-primary btn-lg" id="drawQianBtn" data-i18n="drawQianBtn">摇签问卜</button>
         </div>
 
         <div class="card oracle-result hidden" id="qianResultCard">
@@ -448,19 +457,19 @@
               <span class="muted-note" id="qianNumber">第一签</span>
             </div>
             <div style="display:flex; gap:8px;">
-              <button class="btn btn-ai btn-sm js-ask-ai" data-context="divination">✦ AI 深度解签</button>
-              <button class="btn btn-ghost btn-sm" id="redrawQianBtn">再求一签</button>
+              <button class="btn btn-ai btn-sm js-ask-ai" data-context="divination" data-i18n="askDivAi">✦ AI 深度解签</button>
+              <button class="btn btn-ghost btn-sm" id="redrawQianBtn" data-i18n="redrawQianBtn">再求一签</button>
             </div>
           </div>
           <h2 class="qian-title" id="qianTitle">潜龙出渊</h2>
           <blockquote class="qian-poem" id="qianPoem"></blockquote>
           <div class="qian-explain-grid">
             <div class="tip-box">
-              <strong>白话解签</strong>
+              <strong data-i18n="qianMeaningLbl">白话解签</strong>
               <p id="qianMeaning"></p>
             </div>
             <div class="tip-box">
-              <strong>运势指引</strong>
+              <strong data-i18n="qianGuideLbl">运势指引</strong>
               <p id="qianGuide"></p>
             </div>
           </div>
@@ -470,10 +479,10 @@
       <!-- 每日塔罗面板（支持抽1张 & 抽3张过去/现在/未来） -->
       <div id="divTarotPanel" class="div-panel">
         <div class="card oracle-stage">
-          <p class="oracle-prompt">默念想问之事，选择「单张今日指引」或「三张时间牌阵（过去·现在·未来）」</p>
+          <p class="oracle-prompt" data-i18n="tarotPrompt">默念想问之事，选择「单张今日指引」或「三张时间牌阵（过去·现在·未来）」</p>
           <div class="tarot-actions">
-            <button class="btn btn-primary" id="drawTarot1Btn">✦ 抽 1 张 · 今日指引</button>
-            <button class="btn btn-outline" id="drawTarot3Btn">✦ 抽 3 张 · 过去 / 现在 / 未来</button>
+            <button class="btn btn-primary" id="drawTarot1Btn" data-i18n="drawTarot1Btn">✦ 抽 1 张 · 今日指引</button>
+            <button class="btn btn-outline" id="drawTarot3Btn" data-i18n="drawTarot3Btn">✦ 抽 3 张 · 过去 / 现在 / 未来</button>
           </div>
         </div>
 
@@ -486,40 +495,40 @@
       <div class="section-head">
         <div>
           <span class="section-kicker">EMPIRICAL CHECK-IN · 不是玄学，是复盘</span>
-          <h1>每日复盘对账</h1>
-          <p class="section-desc">每晚记录一下真实体感分，与白天系统预测的综合分对照。连续对账，看清真正适合自己的生活节奏。</p>
+          <h1 data-i18n="reviewH1">每日复盘对账</h1>
+          <p class="section-desc" data-i18n="reviewDesc">每晚记录一下真实体感分，与白天系统预测的综合分对照。连续对账，看清真正适合自己的生活节奏。</p>
         </div>
-        <button class="btn btn-ai btn-sm js-ask-ai" data-context="review">✦ 水镜先生 AI 点评复盘</button>
+        <button class="btn btn-ai btn-sm js-ask-ai" data-context="review" data-i18n="askReviewAi">✦ 水镜先生 AI 点评复盘</button>
       </div>
 
       <div class="review-layout">
         <!-- 左侧打卡表单 -->
         <div class="card">
           <div class="card-header-row">
-            <h2>今日对账打卡</h2>
+            <h2 data-i18n="reviewCardTitle">今日对账打卡</h2>
             <span class="badge badge-cyan" id="reviewTodayDate">2026-11-22</span>
           </div>
 
           <div class="review-compare-banner">
             <div>
-              <span class="mini-label">白天预测综合分</span>
+              <span class="mini-label" data-i18n="predictedLbl">白天预测综合分</span>
               <strong class="review-big-num cyan" id="reviewPredictedVal">86</strong>
             </div>
             <div class="review-vs">VS</div>
             <div>
-              <span class="mini-label">你的真实体感分</span>
+              <span class="mini-label" data-i18n="actualLbl">你的真实体感分</span>
               <strong class="review-big-num gold" id="reviewActualDisplay">82</strong>
             </div>
           </div>
 
           <form id="reviewForm" class="review-form">
             <div class="form-group">
-              <label for="reviewActualRange">滑动给今天的真实状态打分（0 - 100）</label>
+              <label for="reviewActualRange" data-i18n="sliderLbl">滑动给今天的真实状态打分（0 - 100）</label>
               <input type="range" id="reviewActualRange" min="0" max="100" value="82" class="range-slider" />
             </div>
 
             <div class="form-group">
-              <label>今日体感标签</label>
+              <label data-i18n="moodLbl">今日体感标签</label>
               <div class="mood-chips" id="moodChips">
                 <button type="button" class="mood-chip active" data-mood="顺遂高效">顺遂高效</button>
                 <button type="button" class="mood-chip" data-mood="平稳安逸">平稳安逸</button>
@@ -530,11 +539,11 @@
             </div>
 
             <div class="form-group">
-              <label for="reviewNote">一句话复盘随笔（选填）</label>
-              <textarea id="reviewNote" rows="3" class="input-field" placeholder="例如：上午方案顺利通过，下午少刷手机效率高了很多..."></textarea>
+              <label for="reviewNote" data-i18n="noteLbl">一句话复盘随笔（选填）</label>
+              <textarea id="reviewNote" rows="3" class="input-field" data-i18n-placeholder="notePh" placeholder="例如：上午方案顺利通过，下午少刷手机效率高了很多..."></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width:100%;">保存今日对账记录</button>
+            <button type="submit" class="btn btn-primary" style="width:100%;" data-i18n="saveReviewBtn">保存今日对账记录</button>
           </form>
         </div>
 
@@ -542,23 +551,23 @@
         <div class="review-right-col">
           <div class="review-stats-row">
             <div class="card mini-card">
-              <span class="mini-label">累计对账天数</span>
+              <span class="mini-label" data-i18n="statCountLbl">累计对账天数</span>
               <strong class="mini-value" id="statCount">0 天</strong>
             </div>
             <div class="card mini-card">
-              <span class="mini-label">预测平均吻合度</span>
+              <span class="mini-label" data-i18n="statAccLbl">预测平均吻合度</span>
               <strong class="mini-value" id="statAccuracy">—</strong>
             </div>
             <div class="card mini-card">
-              <span class="mini-label">历史平均体感分</span>
+              <span class="mini-label" data-i18n="statAvgLbl">历史平均体感分</span>
               <strong class="mini-value" id="statAvgActual">—</strong>
             </div>
           </div>
 
           <div class="card">
             <div class="card-header-row">
-              <h2>对账记录（近 90 条 · 本地保存）</h2>
-              <span class="muted-note">预测分 vs 体感分</span>
+              <h2 data-i18n="checkinHistoryTitle">对账记录（近 90 条 · 本地保存）</h2>
+              <span class="muted-note" data-i18n="checkinHistoryNote">预测分 vs 体感分</span>
             </div>
             <div class="checkin-list" id="checkinList"></div>
           </div>
@@ -571,11 +580,11 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <div>
-        <strong>水镜运见 · yunjians.com</strong>
-        <p>运势分析与占卜内容仅供文化交流、日常复盘与娱乐参考，不构成任何人生、投资、医疗或法律建议。农历与节气为近似推算。</p>
+        <strong data-i18n="footerBrand">水镜运见 · yunjians.com</strong>
+        <p data-i18n="footerDisclaimer">运势分析与占卜内容仅供文化交流、日常复盘与娱乐参考，不构成任何人生、投资、医疗或法律建议。农历与节气为近似推算。</p>
       </div>
       <div class="footer-links">
-        <span>本地优先存储 · 免登录保护隐私 · 水镜 AI 引擎</span>
+        <span data-i18n="footerRight">本地优先存储 · 免登录保护隐私 · 水镜 AI 引擎</span>
       </div>
     </div>
   </footer>
@@ -585,7 +594,7 @@
     <img src="assets/sage-a.jpg" alt="水镜先生 AI 形象" class="agent-fab-avatar js-sage-avatar" />
     <span class="agent-fab-pill">
       <span class="pulse-dot"></span>
-      <span>问水镜先生</span>
+      <span data-i18n="fabText">问水镜先生</span>
     </span>
   </button>
 
@@ -595,7 +604,7 @@
         <img src="assets/sage-a.jpg" alt="水镜先生" class="agent-avatar-lg js-sage-avatar" />
         <div>
           <div class="agent-title-row">
-            <strong>水镜先生 · AI</strong>
+            <strong data-i18n="agentName">水镜先生 · AI</strong>
             <span class="agent-status-tag" id="agentEngineTag">内置推演引擎</span>
           </div>
           <span class="agent-context-line" id="agentContextLine">实时感知：今日运势</span>
@@ -609,7 +618,7 @@
 
     <div class="agent-settings hidden" id="agentSettingsPanel">
       <div class="settings-block">
-        <label class="settings-label">白胡子老者形象切换</label>
+        <label class="settings-label" data-i18n="avatarSwitchLbl">白胡子老者形象切换</label>
         <div class="avatar-picker" id="avatarPicker">
           <button class="avatar-opt active" data-avatar="assets/sage-a.jpg">
             <img src="assets/sage-a.jpg" alt="水墨全息" />
@@ -627,13 +636,13 @@
       </div>
 
       <div class="settings-block">
-        <label class="settings-label">外接大模型 API（可选 · 留空使用内置智能推演）</label>
+        <label class="settings-label" data-i18n="apiSectionLbl">外接大模型 API（可选 · 留空使用内置智能推演）</label>
         <input type="text" id="apiBaseUrl" class="input-field input-sm" placeholder="API 地址，如 https://api.deepseek.com/v1" />
         <input type="password" id="apiKeyInput" class="input-field input-sm" placeholder="API Key（仅存本机浏览器）" />
         <input type="text" id="apiModelInput" class="input-field input-sm" placeholder="模型名，如 deepseek-chat / gpt-4o-mini" />
         <div class="settings-actions">
-          <button class="btn btn-primary btn-sm" id="saveApiBtn">保存配置</button>
-          <button class="btn btn-ghost btn-sm" id="clearApiBtn">切回内置引擎</button>
+          <button class="btn btn-primary btn-sm" id="saveApiBtn" data-i18n="saveApiBtn">保存配置</button>
+          <button class="btn btn-ghost btn-sm" id="clearApiBtn" data-i18n="clearApiBtn">切回内置引擎</button>
         </div>
       </div>
     </div>
@@ -642,17 +651,18 @@
     <div class="agent-quick-prompts" id="agentQuickPrompts"></div>
 
     <form class="agent-input-bar" id="agentForm">
-      <input type="text" id="agentInput" class="agent-input" placeholder="向水镜先生提问（如：今天适合签约吗？）" autocomplete="off" />
-      <button type="submit" class="btn btn-primary btn-sm">发送</button>
+      <input type="text" id="agentInput" class="agent-input" data-i18n-placeholder="agentInputPh" placeholder="向水镜先生提问（如：今天适合签约吗？）" autocomplete="off" />
+      <button type="submit" class="btn btn-primary btn-sm" data-i18n="sendBtn">发送</button>
     </form>
   </aside>
 
-  <script src="js/calendar.js?v=2.1"></script>
-  <script src="js/bazi.js?v=2.1"></script>
-  <script src="js/horoscope.js?v=2.1"></script>
-  <script src="js/divination.js?v=2.1"></script>
-  <script src="js/fortune.js?v=2.1"></script>
-  <script src="js/agent.js?v=2.1"></script>
-  <script src="js/app.js?v=2.1"></script>
+  <script src="js/calendar.js?v=2.2"></script>
+  <script src="js/bazi.js?v=2.2"></script>
+  <script src="js/horoscope.js?v=2.2"></script>
+  <script src="js/divination.js?v=2.2"></script>
+  <script src="js/fortune.js?v=2.2"></script>
+  <script src="js/i18n.js?v=2.2"></script>
+  <script src="js/agent.js?v=2.2"></script>
+  <script src="js/app.js?v=2.2"></script>
 </body>
 </html>

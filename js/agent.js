@@ -435,7 +435,7 @@ window.ShuijingAgent = (function () {
 
   async function callLiveLLM(question) {
     const endpoint = state.apiConfig.baseUrl.replace(/\/+$/, '') + '/chat/completions';
-    const systemPrompt = `你是「水镜运见」平台的首席 AI 智者「水镜先生」，一位儒雅通透、兼具东方易理底蕴与现代理性复盘思维的白胡子古装老者。请结合以下页面实时数据，用温暖、清晰、不迷信、有建设性的中文回答用户问题，控制在 240 字以内。\n\n【当前页面上下文】\n${buildContextSnapshot()}`;
+    const systemPrompt = `你是「水镜运见」平台的首席 AI 智者「水镜先生」，一位儒雅通透、兼具东方易理底蕴与现代理性复盘思维的白胡子古装老者。请结合以下页面实时数据，用温暖、清晰、不迷信、有建设性的${(window.YunjianI18n && window.YunjianI18n.isEn()) ? '英文（English）' : '中文'}回答用户问题，控制在 240 字以内。\n\n【当前页面上下文】\n${buildContextSnapshot()}`;
 
     const resp = await fetch(endpoint, {
       method: 'POST',
@@ -487,10 +487,14 @@ window.ShuijingAgent = (function () {
     updateEngineTag();
     renderQuickPrompts();
 
-    appendMessage('ai',
-      '道友幸会，老夫乃「水镜运见」首席 AI 智者——水镜先生。\n' +
-      '我已同步你的生辰档案与全站六大模块数据，既能为你解盘择吉、看流年大运，也能陪你做每日「复盘对账」。\n' +
-      '点击右上角「⚙」可随时切换我的 3 款古装形象或接入你的大模型 API。'
+    const en = window.YunjianI18n && window.YunjianI18n.isEn();
+    appendMessage('ai', en
+      ? 'Greetings, traveler. I am Master Shuijing, the AI sage of YunJian.\n' +
+        'I have synced your birth profile and all six modules — ask me about today’s lucky colors, your BaZi chart, trends, compatibility, tarot, or your daily review.\n' +
+        'Tip: I understand English best when an LLM API is connected via ⚙; the built-in engine replies mainly in Chinese.'
+      : '道友幸会，老夫乃「水镜运见」首席 AI 智者——水镜先生。\n' +
+        '我已同步你的生辰档案与全站六大模块数据，既能为你解盘择吉、看流年大运，也能陪你做每日「复盘对账」。\n' +
+        '点击右上角「⚙」可随时切换我的 3 款古装形象或接入你的大模型 API。'
     );
 
     document.getElementById('agentFab').addEventListener('click', () => openDrawer());

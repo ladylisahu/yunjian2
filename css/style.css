@@ -275,6 +275,34 @@ p {
   font-weight: 600;
 }
 
+.lang-toggle-btn {
+  appearance: none;
+  border: 1px solid rgba(229, 185, 107, 0.4);
+  background: rgba(229, 185, 107, 0.1);
+  color: var(--gold);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+  margin-left: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lang-toggle-btn:hover {
+  background: rgba(229, 185, 107, 0.22);
+  border-color: var(--gold);
+  color: #FFF;
+  box-shadow: 0 0 14px rgba(229, 185, 107, 0.35);
+  transform: translateY(-1px);
+}
+
 /* ==================== Today Ticker ==================== */
 .today-ticker {
   background: rgba(15, 23, 42, 0.65);
