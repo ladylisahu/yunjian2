@@ -10,6 +10,7 @@
   const Agent = window.ShuijingAgent;
   const I18n = window.YunjianI18n;
   const isEn = () => Boolean(I18n && I18n.isEn());
+  const locAlm = (alm) => (I18n && I18n.localizeAlmanac ? I18n.localizeAlmanac(alm) : alm);
 
   const HOUR_NAMES = ['子时', '丑时', '寅时', '卯时', '辰时', '巳时', '午时', '未时', '申时', '酉时', '戌时', '亥时'];
   const HOUR_NAMES_EN = ['Zi (23-01)', 'Chou (01-03)', 'Yin (03-05)', 'Mao (05-07)', 'Chen (07-09)', 'Si (09-11)', 'Wu (11-13)', 'Wei (13-15)', 'Shen (15-17)', 'You (17-19)', 'Xu (19-21)', 'Hai (21-23)'];
@@ -122,7 +123,7 @@
   // ==================== 顶部天象监测条 ====================
   function renderTicker() {
     const today = new Date();
-    const alm = Cal.getAlmanac(today);
+    const alm = locAlm(Cal.getAlmanac(today));
     if (isEn()) {
       document.getElementById('tickerDate').textContent =
         `Today ${alm.year}-${String(alm.month).padStart(2, '0')}-${String(alm.day).padStart(2, '0')} · Lunar ${alm.lunar} (${alm.ganzhiText})`;
@@ -139,7 +140,7 @@
   // ==================== 1. 今日运势 · 黄历 ====================
   function renderTodayView(date) {
     currentDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    const alm = Cal.getAlmanac(currentDate);
+    const alm = locAlm(Cal.getAlmanac(currentDate));
     const personal = Fortune.getDailyPersonalFortune(profile, currentDate);
     const now = new Date();
     const viewingToday = isSameDay(currentDate, now);
@@ -166,7 +167,7 @@
 
     // 老黄历
     document.getElementById('almanacDateInput').value = Fortune.formatDateKey(currentDate);
-    document.getElementById('almWeekday').textContent = isEn() ? `${alm.weekday}` : `${alm.weekday} · ${alm.jianchuName}`;
+    document.getElementById('almWeekday').textContent = `${alm.weekday} · ${alm.jianchuName}`;
     document.getElementById('almSolarTerm').textContent = alm.solarTerm;
     document.getElementById('almDayNum').textContent = alm.day;
     document.getElementById('almGregorian').textContent = isEn() ? `${alm.year}-${String(alm.month).padStart(2, '0')}` : `${alm.year}年 ${alm.month}月`;
@@ -566,7 +567,7 @@
           <span class="tarot-roman">${c.roman}</span>
           <span class="tarot-symbol">${c.symbol}</span>
           <strong class="tarot-name-cn">${c.cn}</strong>
-          <span class="tarot-name-en">${c.en}</span>
+          ${isEn() ? '' : `<span class="tarot-name-en">${c.en}</span>`}
         </div>
         <div class="compat-title-row" style="justify-content:center; margin-bottom:0;">
           <h3>${c.cn} · ${c.orientationLabel}</h3>
@@ -575,7 +576,7 @@
         <p class="ziwei-keywords">${c.keywords}</p>
         <p class="analysis-note" style="margin-top:0; text-align:left;">${c.desc}</p>
         <div class="tip-box" style="width:100%; text-align:left;">
-          <strong>行动建议</strong>
+          <strong>${isEn() ? 'Action Advice' : '行动建议'}</strong>
           <p>${c.advice}</p>
         </div>
       </div>
@@ -651,7 +652,7 @@
         return `
           <div class="checkin-item">
             <div class="checkin-top">
-              <strong>${item.dateKey} · <span class="badge badge-gold">${item.mood}</span></strong>
+              <strong>${item.dateKey} · <span class="badge badge-gold">${I18n ? I18n.trMood(item.mood) : item.mood}</span></strong>
               <span class="checkin-scores">${en ? `Forecast ${item.predicted} vs Actual ${item.actual} (${diffLabel})` : `预测 ${item.predicted} vs 体感 ${item.actual}（${diffLabel}）`}</span>
             </div>
             ${item.note ? `<p class="checkin-note">${item.note}</p>` : ''}

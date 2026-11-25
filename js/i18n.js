@@ -23,6 +23,12 @@ window.YunjianI18n = (function () {
 
   const UI_STRINGS = {
     zh: {
+      scoreUnit: '分',
+      mood1: '顺遂高效',
+      mood2: '平稳安逸',
+      mood3: '小有惊喜',
+      mood4: '略有波折',
+      mood5: '疲惫蓄力',
       docTitle: '水镜运见 · yunjians.com — 东方星象科技 · 运势 · 八字紫微 · 复盘对账',
       brandName: '水镜运见',
       brandSub: '东方星象科技 · 确定性推演 · 水镜 AI',
@@ -226,7 +232,13 @@ window.YunjianI18n = (function () {
       saveApiBtn: 'Save API',
       clearApiBtn: 'Use Built-In',
       agentInputPh: 'Ask Master Shuijing (e.g., What color should I wear tomorrow?)',
-      sendBtn: 'Send'
+      sendBtn: 'Send',
+      mood5: 'Tired, Recharging',
+      mood4: 'A Few Bumps',
+      mood3: 'Pleasant Surprise',
+      mood2: 'Calm & Easy',
+      mood1: 'Smooth & Productive',
+      scoreUnit: 'pts'
     }
   };
 
@@ -264,6 +276,74 @@ window.YunjianI18n = (function () {
     火: 'Red, Pink, Coral, Orange, Purple',
     水: 'Black, Navy Blue, Slate Grey'
   };
+
+  // 黄历术语英译（渲染层使用，引擎数据保持中文）
+  const ALMANAC_TERM_EN = {
+    出行: 'Travel', 赴任: 'Start New Post', 祈福: 'Pray for Blessings', 求嗣: 'Family Planning', 纳采: 'Engagement Gifts', 立券: 'Sign Contracts',
+    动土: 'Groundbreaking', 开仓: 'Open Storage', 掘井: 'Dig Wells', 安葬: 'Burial', 沐浴: 'Bathing / Cleansing', 扫舍: 'House Cleaning',
+    求医: 'Seek Medical Care', 治病: 'Treatment', 解除: 'Clear Away', 嫁娶: 'Wedding', 开市: 'Open Business', 搬家: 'Moving House',
+    纳财: 'Receive Wealth', 祭祀: 'Ancestral Rites', 破土: 'Break Ground', 服药: 'Take Medicine', 修造: 'Repairs & Building', 涂泥: 'Plastering',
+    余事勿取: 'Nothing Else Advised', 修饰垣墙: 'Repair Walls', 平治道涂: 'Level Roads', 远行: 'Long Journey', 订盟: 'Form Alliances',
+    交易: 'Trading', 签约: 'Signing', 诉讼: 'Lawsuits', 词讼: 'Litigation', 捕捉: 'Pest Control', 造屋: 'Build House', 移徙: 'Relocate',
+    入宅: 'Move In', 破屋: 'Demolition', 坏垣: 'Tear Down Walls', 安床: 'Set Up Bed', 入殓: 'Encoffining', 登高: 'Climbing Heights',
+    行船: 'Boating', 入学: 'Start School', 争执: 'Arguments', 收账: 'Collect Debts', 放债: 'Lend Money', 求财: 'Seek Wealth', 伐木: 'Logging',
+    修补: 'Mending', 筑堤: 'Build Dikes', 埋葬: 'Burial', 静养: 'Rest & Recover'
+  };
+  const JIANCHU_EN = {
+    建日: 'Establish Day', 除日: 'Remove Day', 满日: 'Full Day', 平日: 'Balance Day', 定日: 'Stable Day', 执日: 'Initiate Day',
+    破日: 'Destruction Day', 危日: 'Danger Day', 成日: 'Success Day', 收日: 'Receive Day', 开日: 'Open Day', 闭日: 'Close Day'
+  };
+  const SOLAR_TERM_EN = {
+    小寒: 'Minor Cold', 大寒: 'Major Cold', 立春: 'Start of Spring', 雨水: 'Rain Water', 惊蛰: 'Awakening of Insects', 春分: 'Spring Equinox',
+    清明: 'Pure Brightness', 谷雨: 'Grain Rain', 立夏: 'Start of Summer', 小满: 'Grain Buds', 芒种: 'Grain in Ear', 夏至: 'Summer Solstice',
+    小暑: 'Minor Heat', 大暑: 'Major Heat', 立秋: 'Start of Autumn', 处暑: 'End of Heat', 白露: 'White Dew', 秋分: 'Autumn Equinox',
+    寒露: 'Cold Dew', 霜降: 'Frost Descent', 立冬: 'Start of Winter', 小雪: 'Minor Snow', 大雪: 'Major Snow', 冬至: 'Winter Solstice'
+  };
+  const WEEKDAY_EN = { 星期日: 'Sunday', 星期一: 'Monday', 星期二: 'Tuesday', 星期三: 'Wednesday', 星期四: 'Thursday', 星期五: 'Friday', 星期六: 'Saturday' };
+  const NAYIN_EN = {
+    海中金: 'Sea Metal', 炉中火: 'Furnace Fire', 大林木: 'Forest Wood', 路旁土: 'Roadside Earth', 剑锋金: 'Sword Metal',
+    山头火: 'Mountain Fire', 涧下水: 'Stream Water', 城头土: 'City Wall Earth', 白蜡金: 'Wax Metal', 杨柳木: 'Willow Wood',
+    泉中水: 'Spring Water', 屋上土: 'Roof Earth', 霹雳火: 'Thunder Fire', 松柏木: 'Pine Wood', 长流水: 'Flowing Water',
+    沙中金: 'Sand Metal', 山下火: 'Foothill Fire', 平地木: 'Plain Wood', 壁上土: 'Wall Earth', 金箔金: 'Gold Leaf Metal',
+    覆灯火: 'Lamp Fire', 天河水: 'Heavenly River Water', 大驿土: 'Highway Earth', 钗钏金: 'Jewelry Metal', 桑柘木: 'Mulberry Wood',
+    大溪水: 'Creek Water', 沙中土: 'Sand Earth', 天上火: 'Sky Fire', 石榴木: 'Pomegranate Wood', 大海水: 'Ocean Water'
+  };
+  const SHA_DIR_EN = { 东: 'East', 西: 'West', 南: 'South', 北: 'North' };
+  const MOOD_EN = { 顺遂高效: 'Smooth & Productive', 平稳安逸: 'Calm & Easy', 小有惊喜: 'Pleasant Surprise', 略有波折: 'A Few Bumps', 疲惫蓄力: 'Tired, Recharging', 平稳: 'Steady' };
+
+  function trSolarTerm(str) {
+    if (!str) return str;
+    let m = str.match(/^节气 · (.+)$/);
+    if (m) return `Solar Term · ${SOLAR_TERM_EN[m[1]] || m[1]}`;
+    m = str.match(/^临近 (.+)$/);
+    if (m) return `Near ${SOLAR_TERM_EN[m[1]] || m[1]}`;
+    m = str.match(/^(.+)节气$/);
+    if (m) return `${SOLAR_TERM_EN[m[1]] || m[1]} Period`;
+    return str;
+  }
+  function trChongSha(str) {
+    const m = (str || '').match(/^冲(.)煞(.)$/);
+    if (!m) return str;
+    return `Clashes ${ANIMAL_EN[m[1]] || m[1]} · Sha ${SHA_DIR_EN[m[2]] || m[2]}`;
+  }
+  /** 返回黄历英文化副本（非英文模式原样返回） */
+  function localizeAlmanac(alm) {
+    if (!alm || lang !== 'en') return alm;
+    return {
+      ...alm,
+      yi: (alm.yi || []).map(x => ALMANAC_TERM_EN[x] || x),
+      ji: (alm.ji || []).map(x => ALMANAC_TERM_EN[x] || x),
+      chongSha: trChongSha(alm.chongSha),
+      nayin: NAYIN_EN[alm.nayin] || alm.nayin,
+      solarTerm: trSolarTerm(alm.solarTerm),
+      weekday: WEEKDAY_EN[alm.weekday] || alm.weekday,
+      jianchuName: JIANCHU_EN[alm.jianchuName] || alm.jianchuName,
+      hours: (alm.hours || []).map(h => ({ ...h, luckText: h.isGood ? 'Auspicious' : 'Inauspicious' }))
+    };
+  }
+  function trMood(m) {
+    return lang === 'en' ? (MOOD_EN[m] || m) : m;
+  }
 
   function getLang() {
     return lang;
@@ -327,6 +407,13 @@ window.YunjianI18n = (function () {
     ZODIAC_EN,
     ZODIAC_CN_TO_EN,
     COLOR_TIER_EN,
-    PALETTE_EN
+    PALETTE_EN,
+    ALMANAC_TERM_EN,
+    JIANCHU_EN,
+    SOLAR_TERM_EN,
+    NAYIN_EN,
+    MOOD_EN,
+    localizeAlmanac,
+    trMood
   };
 })();

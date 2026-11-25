@@ -47,6 +47,36 @@ window.YunjianFortune = (function () {
     { label: '通达自在', theme: '阅历通透、化繁为简，适合传承经验与享受内在丰盈。' }
   ];
 
+  const isEn = () => !!(window.YunjianI18n && window.YunjianI18n.isEn());
+  const DAILY_KEYWORDS_EN = [
+    'Break Through with Flow', 'Steady Progress', 'Helpful Allies', 'Spark of Inspiration',
+    'Quiet Consolidation', 'Focus on the Core', 'Echoes of Reward', 'Gentle Build-Up',
+    'Opportunity Knocks', 'Principled Creativity', 'Relaxed Yet Orderly', 'Natural Momentum'
+  ];
+  const DAILY_SUMMARIES_EN = [
+    'Today resonates strongly with your chart — a good moment to push a pending key conversation or kick off a new plan.',
+    'The rhythm is steady and rising. Focus on your two most important tasks rather than trying to cover everything.',
+    'Social and teamwork energy is strong. A simple greeting or shared idea may bring unexpected support.',
+    'Intuition and focus are on point — great for reviewing, creative output, or settling mid-to-long-term plans.',
+    'Small hiccups may appear but won’t change the big picture. Slow down to double-check details and turn changes into chances.',
+    'You feel relaxed today. Wrap up efficiently, then treat yourself — a good mood is your best luck charm.'
+  ];
+  const LIUNIAN_THEMES_EN = [
+    { tag: 'Rooting & Building', tip: 'Polish core skills and reputation; expand less, strengthen your foundation more.' },
+    { tag: 'Breaking Ground', tip: 'New tracks and opportunities emerge — proactively go for key roles or project leadership.' },
+    { tag: 'Allies Align', tip: 'Partnerships and network leverage grow — teaming up with great people multiplies results.' },
+    { tag: 'Wealth Star Shines', tip: 'Steady income with chances to monetize — turn past accumulation into real returns.' },
+    { tag: 'Climbing Higher', tip: 'A year of broader vision — good for cross-disciplinary learning and long-term positioning.' },
+    { tag: 'Inner Balance', tip: 'Balance effort and rest, care for health and family, and protect your gains while waiting for timing.' }
+  ];
+  const DAYUN_STAGES_EN = [
+    { label: 'Early Discovery', theme: 'Explore yourself and build your base; try many directions to gain experience.' },
+    { label: 'Rising Foundation', theme: 'Career and expertise take shape fast; deepening one main track pays off greatly.' },
+    { label: 'Peak Expansion', theme: 'A stage of integrating resources and amplifying influence — leverage teams and platforms.' },
+    { label: 'Steady Harvest', theme: 'Experience compounds; favor quality over friction as finances and life grow easier.' },
+    { label: 'Free & At Ease', theme: 'Clear-sighted and simplified — share your experience and enjoy inner abundance.' }
+  ];
+
   function hashStr(str) {
     let h = 2166136261;
     for (let i = 0; i < str.length; i++) {
@@ -105,8 +135,8 @@ window.YunjianFortune = (function () {
     return {
       dateKey,
       overall,
-      keyword: DAILY_KEYWORDS[seed % DAILY_KEYWORDS.length],
-      summary: DAILY_SUMMARIES[Math.floor(seed / 7) % DAILY_SUMMARIES.length],
+      keyword: (isEn() ? DAILY_KEYWORDS_EN : DAILY_KEYWORDS)[seed % DAILY_KEYWORDS.length],
+      summary: (isEn() ? DAILY_SUMMARIES_EN : DAILY_SUMMARIES)[Math.floor(seed / 7) % DAILY_SUMMARIES.length],
       dimensions: [
         { key: 'career', label: '事业', score: career, color: '#38BDF8' },
         { key: 'wealth', label: '财运', score: wealth, color: '#E5B96B' },
@@ -150,7 +180,7 @@ window.YunjianFortune = (function () {
       const gz = `${STEMS[gzIdx % 10]}${BRANCHES[gzIdx % 12]}年`;
       const s = hashStr(`ln:${fp}:${y}`);
       const score = 68 + (s % 29);
-      const theme = LIUNIAN_THEMES[s % LIUNIAN_THEMES.length];
+      const theme = (isEn() ? LIUNIAN_THEMES_EN : LIUNIAN_THEMES)[s % LIUNIAN_THEMES.length];
       liunian.push({
         year: y,
         age: Math.max(1, y - birthYear + 1),
@@ -168,13 +198,13 @@ window.YunjianFortune = (function () {
       const toAge = fromAge + 9;
       const isCurrent = currentAge >= fromAge && currentAge <= toAge;
       const pillarIdx = (hashStr(fp) + idx * 7) % 60;
-      const pillar = `${STEMS[pillarIdx % 10]}${BRANCHES[pillarIdx % 12]}运`;
+      const pillar = isEn() ? `${STEMS[pillarIdx % 10]}${BRANCHES[pillarIdx % 12]} Cycle` : `${STEMS[pillarIdx % 10]}${BRANCHES[pillarIdx % 12]}运`;
       return {
-        range: `${fromAge} - ${toAge} 岁`,
+        range: isEn() ? `Age ${fromAge} - ${toAge}` : `${fromAge} - ${toAge} 岁`,
         years: `${birthYear + fromAge - 1} - ${birthYear + toAge - 1}`,
         pillar,
-        label: st.label,
-        theme: st.theme,
+        label: isEn() ? DAYUN_STAGES_EN[idx].label : st.label,
+        theme: isEn() ? DAYUN_STAGES_EN[idx].theme : st.theme,
         isCurrent
       };
     });

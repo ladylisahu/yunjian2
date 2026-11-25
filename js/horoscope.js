@@ -56,6 +56,43 @@ window.ShuijingHoroscope = (function () {
     '适合整理账单与订阅项，精简不必要开支后会有意想不到的结余。'
   ];
 
+  const isEn = () => !!(window.YunjianI18n && window.YunjianI18n.isEn());
+  const SIGN_EN = { aries: 'Aries', taurus: 'Taurus', gemini: 'Gemini', cancer: 'Cancer', leo: 'Leo', virgo: 'Virgo', libra: 'Libra', scorpio: 'Scorpio', sagittarius: 'Sagittarius', capricorn: 'Capricorn', aquarius: 'Aquarius', pisces: 'Pisces' };
+  const ELEM_EN = { 火象: 'Fire', 土象: 'Earth', 风象: 'Air', 水象: 'Water' };
+  const ANIMAL_EN = ['Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig'];
+  const LUCKY_COLORS_EN = ['Cinnabar Red', 'Moon White', 'Indigo Teal', 'Amber Gold', 'Turquoise Green', 'Haze Blue', 'Apricot Beige', 'Crimson Purple', 'Ivory White', 'Tea Brown'];
+  const QUOTES_EN = [
+    'Go with the flow — your first instinct is the most trustworthy thing today.',
+    'Slow down and reset your rhythm; clear direction beats blind speed.',
+    'One small proactive step may bring unexpected good news.',
+    'Stay open and curious — helpful people often hide in casual conversations.',
+    'Save your energy for what truly matters and say no to drains.',
+    'Patience is blossoming; today suits steady progress on your plans.',
+    'Inspiration is flowing — jot down your good ideas right away.',
+    'Be gentle with yourself and others; a good mood attracts good luck.'
+  ];
+  const LOVE_TEXTS_EN = [
+    'Singles may meet someone easy to talk to in daily social life; couples could enjoy a relaxed dinner or walk to warm things up.',
+    'The mood for communication is gentle — share your small hopes honestly; your partner is more willing than you think.',
+    'Feelings run a bit sensitive. Don’t over-read a single remark; leave some breathing room for both of you.',
+    'Your charm is rising and sincere expression moves people most — a good time to deepen a budding connection or plan a short trip together.',
+    'A steady, grounded rhythm in love: quiet companionship beats drama, and a caring message carries real weight.'
+  ];
+  const CAREER_TEXTS_EN = [
+    'Clear thinking and efficient execution — great for tackling long-delayed priorities or brainstorming.',
+    'Teamwork flows smoothly; proactively sharing progress and ideas earns recognition.',
+    'Details decide outcomes today — double-check proposals or documents before submitting or signing.',
+    'Last-minute changes may arise; stay calm — your adaptability can turn them into new chances.',
+    'Good for reviewing and learning; wrap up current work and prepare structurally for the next stage.'
+  ];
+  const WEALTH_TEXTS_EN = [
+    'Steady income energy — past time or projects may start paying back; good for mid-to-long-term financial planning.',
+    'Spending urges rise a bit. Wait ten minutes before buying and separate “want” from “need”.',
+    'Small windfalls are possible — discounts, gifts or valuable collaboration leads. Stay alert.',
+    'Better to hold than to chase; avoid following volatile investments blindly and keep cash flow secure.',
+    'Good for sorting bills and subscriptions — trimming unnecessary costs may leave a pleasant surplus.'
+  ];
+
   // 确定性哈希（保证同一天同一星座结果一致）
   function hashSeed(str) {
     let h = 2166136261;
@@ -90,11 +127,15 @@ window.ShuijingHoroscope = (function () {
         { label: '事业学业', val: career },
         { label: '财富指数', val: wealth }
       ],
-      luckyColor,
+      luckyColor: isEn() ? LUCKY_COLORS_EN[seed % LUCKY_COLORS.length] : luckyColor,
       luckyNumber,
       matchSign: matchSign.name,
-      quote: QUOTES[seed % QUOTES.length],
-      advice: [
+      quote: (isEn() ? QUOTES_EN : QUOTES)[seed % QUOTES.length],
+      advice: isEn() ? [
+        { title: 'Love & Relationships', text: LOVE_TEXTS_EN[seed % LOVE_TEXTS.length] },
+        { title: 'Career & Study', text: CAREER_TEXTS_EN[Math.floor(seed / 11) % CAREER_TEXTS.length] },
+        { title: 'Wealth & Spending', text: WEALTH_TEXTS_EN[Math.floor(seed / 23) % WEALTH_TEXTS.length] }
+      ] : [
         { title: '爱情与人际', text: LOVE_TEXTS[seed % LOVE_TEXTS.length] },
         { title: '事业与学业', text: CAREER_TEXTS[Math.floor(seed / 11) % CAREER_TEXTS.length] },
         { title: '财富与消费', text: WEALTH_TEXTS[Math.floor(seed / 23) % WEALTH_TEXTS.length] }
@@ -147,6 +188,18 @@ window.ShuijingHoroscope = (function () {
       advice = '多一点耐心与好奇心，把差异当成惊喜而非挑剔的理由，缘分自会升温。';
     }
 
+    if (isEn()) {
+      const an = SIGN_EN[a.id], bn = SIGN_EN[b.id], ae = ELEM_EN[a.element], be = ELEM_EN[b.element];
+      let e;
+      if (idxA === idxB) e = ['Mirror Soulmates', `As two ${ae} signs, you read each other like a mirror and catch each other's moods without words.`, 'Shared values and pace create instant rapport — you easily become each other\'s most trusted partner.', 'Being so alike, you may both dig in during disagreements; take turns stepping back.'];
+      else if (diff === 4) e = ['Made for Each Other · Trine', `${an} and ${bn} are both ${ae} signs, forming the harmonious 120° trine — easy, natural and mutually nourishing.`, 'Same wavelength with plenty to talk about, bringing out the best in each other.', 'Keep creating freshness amid the ease; shared growth goals deepen the bond.'];
+      else if (diff === 2) e = ['Complementary Partners · Sextile', `${ae} and ${be} form a 60° sextile — you admire each other and fill each other's gaps, with sparkling communication.`, 'Smooth communication and efficient teamwork — great as partners in love, life and work.', 'Acknowledge each other\'s efforts often and weave small joys into daily life.'];
+      else if (diff === 6) e = ['Magnetic Pull · Opposition', `${an} and ${bn} sit opposite on the zodiac wheel, like two poles of a magnet — intense attraction from the start.`, 'Each has what the other longs for; together you open whole new perspectives.', 'Respect your very different styles — “agree to differ” is the key to this pair.'];
+      else if (diff === 3) e = ['Lovable Rivals · Square', 'You form a 90° square — different rhythms and focuses mean friction, but also deep growth.', 'Both have strong personalities; once past early friction, you become more resilient than most pairs.', 'Argue less about winning and talk more about feelings; agree on communication ground rules early.'];
+      else e = ['Slow Burn · Growing Closer', `${an} (${ae}) and ${bn} (${be}) take time to understand — the more you know each other, the more fascinating it gets.`, 'No fixed script: each of you learns a fresh way of seeing the world from the other.', 'Bring patience and curiosity; treat differences as surprises rather than faults.'];
+      return { pairTitle: `${an} ${a.glyph} × ${bn} ${b.glyph}`, score, tag: e[0], summary: e[1], pros: e[2], advice: e[3] };
+    }
+
     return {
       pairTitle: `${a.name} ${a.glyph} × ${b.name} ${b.glyph}`,
       score,
@@ -197,6 +250,17 @@ window.ShuijingHoroscope = (function () {
       summary = `属${a}与属${b}无明显冲克，属于平实温暖、靠日常经营愈发醇厚的缘分组合。`;
       pros = '关系平稳少大起大落，彼此尊重各自节奏，适合长久陪伴。';
       advice = '多制造共同回忆，把关心落到生活细节里，感情会越走越稳。';
+    }
+
+    if (isEn()) {
+      const an = ANIMAL_EN[idxA], bn = ANIMAL_EN[idxB];
+      let e;
+      if (liuhePairs.has(key)) e = ['Top Match · Six Harmony', `In tradition, ${an} and ${bn} form a “Six Harmony” pair — blending energies and lifting each other up.`, 'Mutual support in daily life and career planning; you pull in the same direction.', 'Cherish this natural rapport and stand together when outside noise appears.'];
+      else if (sanhe) e = ['Blessed Match · Three Harmony', `${an} and ${bn} belong to the same “Three Harmony” group — shared interests and balanced give-and-take.`, 'Highly aligned values; in tough times you think alike — great for partnership and love.', 'Stay sincere and plan big life matters together regularly.'];
+      else if (idxA === idxB) e = ['Kindred Spirits · Same Sign', `Two ${an}s share a similar core, easily understanding each other's worries and goals.`, 'Low communication cost; habits and tastes often align.', 'Avoid getting emotional at the same time under stress; one calming down first resolves friction fast.'];
+      else if (chongDiff) e = ['Finding Balance · Six Clash', `${an} and ${bn} form a traditional “clash” — clear contrasts that call for extra wisdom and understanding.`, 'Far from incompatible: you break each other\'s mental habits and can complement strongly.', 'Discuss rather than collide, keep personal space, and let softness overcome hardness.'];
+      else e = ['Smooth & Steady · Lasting Bond', `${an} and ${bn} have no notable clash — a warm, down-to-earth bond that deepens with daily care.`, 'A steady relationship with few highs and lows, respecting each other\'s pace.', 'Create shared memories and show care in everyday details.'];
+      return { pairTitle: `${an} × ${bn}`, score, tag: e[0], summary: e[1], pros: e[2], advice: e[3] };
     }
 
     return {

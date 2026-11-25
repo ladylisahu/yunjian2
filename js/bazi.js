@@ -96,6 +96,39 @@ window.ShuijingBazi = (function () {
     { name: '破军星', category: '开创型', keywords: '先破后立 · 创意无限 · 敢于颠覆', desc: '先锋之星，讨厌一成不变，擅长打破旧框架开创新局面。给自己留好后备资源，大刀阔斧的同时稳住根基。' }
   ];
 
+  const isEn = () => !!(window.YunjianI18n && window.YunjianI18n.isEn());
+  const WX_EN = { 金: 'Metal', 木: 'Wood', 水: 'Water', 火: 'Fire', 土: 'Earth' };
+
+  const DAY_MASTER_EN = {
+    甲: { title: 'Jia Wood · Towering Tree', element: 'Yang Wood', personality: 'Upright and kind, with the drive to grow upward and take responsibility. Principled with natural leadership, though sometimes a bit stubborn.', career: 'Suited to management, education and culture, creative planning or entrepreneurship — you shine most on platforms with clear goals and room to grow.', love: 'Loyal and protective, expressing love through actions rather than sweet words. Learning to listen softly makes relationships last.' },
+    乙: { title: 'Yi Wood · Flowers & Vines', element: 'Yin Wood', personality: 'Gentle, perceptive and highly adaptable — soft outside, strong inside, skilled at growing with support. Strong aesthetics and empathy.', career: 'Suited to design, PR and communication, consulting, content creation and collaborative work; your network multiplies your results.', love: 'Warm and caring, valuing atmosphere and emotional connection. Keeping healthy boundaries makes your partner cherish you more.' },
+    丙: { title: 'Bing Fire · Blazing Sun', element: 'Yang Fire', personality: 'Warm, open and honest, with contagious energy and drive. Quick emotions that pass fast — avoid rushing.', career: 'Suited to marketing, media and entertainment, brand building, team leadership or emerging tech — you thrive with a stage and feedback.', love: 'Passionate, sincere and generous; you love exploring new things together. A little extra patience in daily routines keeps it sweet.' },
+    丁: { title: 'Ding Fire · Candlelight', element: 'Yin Fire', personality: 'Quietly warm yet insightful, meticulous, artistic and idealistic — calm on the surface, burning within.', career: 'Suited to research and analysis, psychology, writing, financial strategy and refined consumer products that need deep focus.', love: 'Devoted and detail-oriented, seeking soul-level resonance; you may overthink. Stating your needs openly brings peace to both.' },
+    戊: { title: 'Wu Earth · Mountain', element: 'Yang Earth', personality: 'Steady, reliable and resilient under pressure — the rock others lean on. Prefers a stable pace over sudden change.', career: 'Suited to risk management, real estate and infrastructure, operations, supply chain or long-term value investing.', love: 'Practical and devoted, keeping promises through action. A little spontaneous romance goes a long way.' },
+    己: { title: 'Ji Earth · Fertile Field', element: 'Yin Earth', personality: 'Inclusive and considerate, attentive to others’ feelings, practical and tenacious; tends to worry on others’ behalf.', career: 'Suited to HR, finance, healthcare, customer success, education and other nurturing, service-oriented roles.', love: 'Steady and long-lasting, good at building a cozy home life. Take care of your own feelings before giving warmth.' },
+    庚: { title: 'Geng Metal · Steel Blade', element: 'Yang Metal', personality: 'Decisive, loyal and efficiency-driven; bold in facing challenges with strong execution, though sometimes blunt.', career: 'Suited to law and compliance, engineering, negotiation, competitive management or transformation roles — sharpened by challenge.', love: 'Clear in love, action-oriented and fiercely protective. A gentler tone helps avoid misunderstandings.' },
+    辛: { title: 'Xin Metal · Jewel', element: 'Yin Metal', personality: 'Refined and clever with strong self-respect, pursuing quality and beauty; observant, opinionated and detail-demanding.', career: 'Suited to fashion and jewelry, product design, precision tech, financial analysis and premium services.', love: 'Values ritual and taste; slow to warm up but deeply devoted. Happiest with someone who respects your taste and space.' },
+    壬: { title: 'Ren Water · Great River', element: 'Yang Water', personality: 'Broad-minded, witty and flexible, a leaping thinker full of curiosity who adapts superbly to new environments.', career: 'Suited to internet, cross-border trade, investment consulting, logistics and travel, media — dynamic fields full of change.', love: 'Free-spirited and charming, preferring independent yet admiring partnerships. Shared goals ground the relationship.' },
+    癸: { title: 'Gui Water · Dew & Spring', element: 'Yin Water', personality: 'Graceful, intuitive, understanding and imaginative — quietly effective, with surprising inner resilience.', career: 'Suited to creative planning, data analysis, healing arts, academic research or behind-the-scenes strategist roles.', love: 'Delicate, romantic and deeply empathetic, craving emotional depth. Overthink less and trust your own charm.' }
+  };
+
+  const ZIWEI_EN = {
+    紫微星: { name: 'Ziwei (Emperor Star)', category: 'Leader', keywords: 'Dignified · Big-Picture · Strong Coordinator', desc: 'The emperor star: a natural big-picture thinker with high self-expectations who likes taking the initiative. Cultivate tolerance and leverage your team.' },
+    天机星: { name: 'Tianji (Strategist Star)', category: 'Supporter', keywords: 'Resourceful · Quick-Witted · Great Planner', desc: 'The star of wisdom: a fast mind full of ideas with a gift for analysis and learning. Avoid overthinking — commit to a direction and execute.' },
+    太阳星: { name: 'Taiyang (Sun Star)', category: 'Supporter', keywords: 'Warm · Open-Hearted · Generous', desc: 'The radiant star: energetic and expressive, naturally caring for others. Balance work and rest; don’t carry every burden alone.' },
+    武曲星: { name: 'Wuqu (Wealth General)', category: 'Leader', keywords: 'Resolute · Pragmatic · Wealth-Blessed', desc: 'The star of steady wealth: excellent execution and resilience, focused on results. A softer touch in communication brings success in both career and relationships.' },
+    天同星: { name: 'Tiantong (Harmony Star)', category: 'Partner', keywords: 'Gentle · Optimistic · Well-Liked', desc: 'The star of blessings: approachable, appreciative of life’s beauty, with good support from others. Set yourself moderate challenges to unlock hidden potential.' },
+    廉贞星: { name: 'Lianzhen (Charisma Star)', category: 'Pioneer', keywords: 'Independent · Talented · Passionate', desc: 'A star of charm and PR: unique taste, socially agile, proud and ambitious. Guide passion with reason to achieve the extraordinary.' },
+    天府星: { name: 'Tianfu (Treasury Star)', category: 'Leader', keywords: 'Steady · Preserving · Deep Reserves', desc: 'The treasury star: composed and orderly, enjoying life while managing resources well. Embracing change amplifies your strengths.' },
+    太阴星: { name: 'Taiyin (Moon Star)', category: 'Partner', keywords: 'Gentle · Aesthetic · Inner-Focused', desc: 'A soft star of prosperity: meticulous with sharp intuition, excelling at slow, careful accumulation. Keep confidence and momentum — your stamina is strong.' },
+    贪狼星: { name: 'Tanlang (Wolf Star)', category: 'Pioneer', keywords: 'Versatile · Magnetic · Desire-Driven', desc: 'A star of charm and socializing: learns fast, highly expressive with business instinct. Focus deeply on one or two core tracks to stand out.' },
+    巨门星: { name: 'Jumen (Gate Star)', category: 'Supporter', keywords: 'Eloquent · Inquisitive · Truth-Seeking', desc: 'The star of reasoning: clear logic and sharp observation, great at research, negotiation and expression. Leave some room when speaking to turn disputes into allies.' },
+    天相星: { name: 'Tianxiang (Minister Star)', category: 'Leader', keywords: 'Fair · Loyal · Dignified', desc: 'A star of support and seals: principled, well-presented and trustworthy, valued by bosses and partners. Speak up decisively; don’t over-worry about others’ opinions.' },
+    天梁星: { name: 'Tianliang (Elder Star)', category: 'Partner', keywords: 'Kind-Hearted · Mature · Turns Trouble to Luck', desc: 'The protective elder star: principled, caring for the vulnerable, with strong professional authority. Less lecturing and more humor wins more hearts.' },
+    七杀星: { name: 'Qisha (General Star)', category: 'Pioneer', keywords: 'Brave · Independent · Fearless', desc: 'The leading general star: born with drive and reformist courage, energized by adversity. Assess risks before charging ahead and your odds are high.' },
+    破军星: { name: 'Pojun (Vanguard Star)', category: 'Pioneer', keywords: 'Break & Rebuild · Creative · Disruptive', desc: 'The vanguard star: dislikes routine and excels at breaking old frames. Keep reserves in place while making bold moves.' }
+  };
+
   const WUXING_COLORS = {
     木: '#2E7D5B',
     火: '#C84331',
@@ -132,21 +165,31 @@ window.ShuijingBazi = (function () {
     const minWx = entries.reduce((a, b) => (b[1] < a[1] ? b : a));
     const missing = entries.filter(([, v]) => v === 0).map(([k]) => k);
 
-    let wuxingNote = `命盘中「${maxWx[0]}」行能量最旺（${maxWx[1]}个）。`;
+    let wuxingNote;
+    if (isEn()) {
+      wuxingNote = `${WX_EN[maxWx[0]]} is the strongest element in your chart (${maxWx[1]}). `;
+      if (missing.length > 0) {
+        wuxingNote += `Missing element(s): ${missing.map(k => WX_EN[k]).join(', ')}. You may add a touch of ${WX_EN[missing[0]]} through clothing, space or daily rhythm for balance.`;
+      } else {
+        wuxingNote += `All five elements are present — a well-rounded chart. ${WX_EN[minWx[0]]} is relatively weaker and worth nurturing.`;
+      }
+    } else {
+    wuxingNote = `命盘中「${maxWx[0]}」行能量最旺（${maxWx[1]}个）。`;
     if (missing.length > 0) {
       wuxingNote += `五行缺「${missing.join('、')}」，日常穿搭、居住方位或行事节奏中可适当补充「${missing[0]}」系元素以求平衡。`;
     } else {
       wuxingNote += `五行金木水火土俱全，格局较为周正；相对偏弱的是「${minWx[0]}」行，平时可多加滋养。`;
     }
+    }
 
     // 紫微命宫主星速查（基于生辰干支与月份时辰确定性排定）
     const ziweiSeed = (pillars.year.gzIdx * 3 + (m * 7) + (d * 11) + hourBranchIdx * 5) % ZIWEI_STARS.length;
-    const ziweiStar = ZIWEI_STARS[ziweiSeed];
+    const ziweiStar = isEn() ? { ...ZIWEI_STARS[ziweiSeed], ...ZIWEI_EN[ZIWEI_STARS[ziweiSeed].name] } : ZIWEI_STARS[ziweiSeed];
 
-    const dayMaster = DAY_MASTER_PROFILES[pillars.day.stem];
+    const dayMaster = isEn() ? DAY_MASTER_EN[pillars.day.stem] : DAY_MASTER_PROFILES[pillars.day.stem];
 
     return {
-      genderLabel: gender === 'male' ? '乾造（男）' : '坤造（女）',
+      genderLabel: isEn() ? (gender === 'male' ? 'Qian (Male)' : 'Kun (Female)') : (gender === 'male' ? '乾造（男）' : '坤造（女）'),
       shengxiao: pillars.shengxiao,
       pillars: list,
       counts,

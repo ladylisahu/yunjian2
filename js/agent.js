@@ -40,6 +40,29 @@ window.ShuijingAgent = (function () {
     review: ['点评我最近的复盘对账记录', '预测分和体感分有偏差说明什么？', '怎么利用复盘找到我的高效节奏？']
   };
 
+  const isEn = () => !!(window.YunjianI18n && window.YunjianI18n.isEn());
+
+  const TAB_LABELS_EN = {
+    today: 'Today · Almanac',
+    bazi: 'BaZi · Ziwei · Cycles',
+    trends: 'Trends · Zodiac Ranking',
+    compatibility: 'Compatibility',
+    divination: 'Fortune Lots · Tarot',
+    review: 'Daily Reflection'
+  };
+
+  const QUICK_PROMPTS_EN = {
+    today: ['What color should I wear today for helpful people and teamwork?', 'Give me an overall reading of today', 'Is today good for signing or an important deal?'],
+    bazi: ['Connect my BaZi, Ziwei star and this year’s cycle', 'How can I balance my Five Elements day to day?', 'What key opportunities does my current 10-year cycle bring?'],
+    trends: ['Analyze my trend and rhythm for the coming days', 'Any lucky details in today’s horoscope?', 'Which day this week is best for big moves?'],
+    compatibility: ['Deep dive into how we get along', 'How do we best resolve disagreements?', 'Are we suited for a long-term relationship or partnership?'],
+    divination: ['Interpret the lot / tarot I just drew', 'What does it mean for my career?', 'What does it suggest about love?'],
+    review: ['Review my recent check-ins', 'What does a gap between forecast and feeling mean?', 'How can reflection help me find my productive rhythm?']
+  };
+
+  const tabLabels = () => (isEn() ? TAB_LABELS_EN : TAB_LABELS);
+  const quickPrompts = () => (isEn() ? QUICK_PROMPTS_EN : QUICK_PROMPTS);
+
   function loadApiConfig() {
     try {
       const raw = localStorage.getItem(STORAGE_API);
@@ -72,9 +95,30 @@ window.ShuijingAgent = (function () {
   function updateContextUI() {
     const line = document.getElementById('agentContextLine');
     if (!line) return;
-    const label = TAB_LABELS[state.activeTab] || '星象历法';
-    const userTag = state.profile ? `${state.profile.name}` : '访客';
+    const en = isEn();
+    const label = tabLabels()[state.activeTab] || (en ? 'Almanac' : '星象历法');
+    const userTag = state.profile ? `${state.profile.name}` : (en ? 'Guest' : '访客');
     let detail = '';
+
+    if (en) {
+      if (state.activeTab === 'today' && state.context.today) {
+        detail = ` · Overall ${state.context.today.personal.overall} pts`;
+      } else if (state.activeTab === 'bazi' && state.context.bazi) {
+        detail = ` · ${state.context.bazi.bazi.dayMaster.title.split(' · ')[0]} · ${state.context.bazi.bazi.ziweiStar.name}`;
+      } else if (state.activeTab === 'trends' && state.context.trends) {
+        const sn = state.context.trends.horoscope.sign;
+        detail = ` · ${(window.YunjianI18n.ZODIAC_EN || {})[sn.id] || sn.name}`;
+      } else if (state.activeTab === 'compatibility' && state.context.compatibility) {
+        detail = ` · ${state.context.compatibility.pairTitle} (${state.context.compatibility.score} pts)`;
+      } else if (state.activeTab === 'divination' && state.context.divination) {
+        const d = state.context.divination;
+        detail = d.type === 'qian' ? ` · ${d.data.num} “${d.data.title}”` : ` · ${d.cards.length}-card tarot spread`;
+      } else if (state.activeTab === 'review' && state.context.review) {
+        detail = ` · ${state.context.review.stats.count} days logged`;
+      }
+      line.textContent = `Live context (${userTag}): ${label}${detail}`;
+      return;
+    }
 
     if (state.activeTab === 'today' && state.context.today) {
       detail = ` · 综合${state.context.today.personal.overall}分 · ${state.context.today.almanac.jianchuName}`;
@@ -109,6 +153,10 @@ window.ShuijingAgent = (function () {
   function updateEngineTag() {
     const tag = document.getElementById('agentEngineTag');
     if (!tag) return;
+    if (isEn()) {
+      tag.textContent = hasLiveApi() ? `LLM: ${state.apiConfig.model || 'Connected'}` : 'Built-in Engine';
+      return;
+    }
     tag.textContent = hasLiveApi() ? `大模型：${state.apiConfig.model || '已接入'}` : '内置推演引擎';
   }
 
@@ -118,7 +166,8 @@ window.ShuijingAgent = (function () {
     drawer.setAttribute('aria-hidden', 'false');
     if (autoAskContext) {
       setActiveTab(autoAskContext);
-      const firstPrompt = (QUICK_PROMPTS[autoAskContext] && QUICK_PROMPTS[autoAskContext][0]) || '请为我深度解读当前内容';
+      const qp = quickPrompts();
+      const firstPrompt = (qp[autoAskContext] && qp[autoAskContext][0]) || (isEn() ? 'Please interpret the current content for me' : '请为我深度解读当前内容');
       handleUserMessage(firstPrompt);
     }
   }
@@ -132,7 +181,8 @@ window.ShuijingAgent = (function () {
   function renderQuickPrompts() {
     const box = document.getElementById('agentQuickPrompts');
     if (!box) return;
-    const prompts = QUICK_PROMPTS[state.activeTab] || QUICK_PROMPTS.today;
+    const qp = quickPrompts();
+    const prompts = qp[state.activeTab] || qp.today;
     box.innerHTML = prompts.map(p => `<button class="quick-chip" type="button">${p}</button>`).join('');
     box.querySelectorAll('.quick-chip').forEach(chip => {
       chip.addEventListener('click', () => handleUserMessage(chip.textContent));
@@ -223,13 +273,13 @@ window.ShuijingAgent = (function () {
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     let targetDate = null;
 
-    if (/后天|后日/.test(question)) {
+    if (/后天|后日|day after tomorrow/i.test(question)) {
       targetDate = new Date(todayStart.getFullYear(), todayStart.getMonth(), todayStart.getDate() + 2);
-    } else if (/明天|明日|次日/.test(question)) {
+    } else if (/明天|明日|次日|tomorrow/i.test(question)) {
       targetDate = new Date(todayStart.getFullYear(), todayStart.getMonth(), todayStart.getDate() + 1);
-    } else if (/昨天|昨日/.test(question)) {
+    } else if (/昨天|昨日|yesterday/i.test(question)) {
       targetDate = new Date(todayStart.getFullYear(), todayStart.getMonth(), todayStart.getDate() - 1);
-    } else if (/今天|今日/.test(question)) {
+    } else if (/今天|今日|today|tonight/i.test(question)) {
       targetDate = todayStart;
     } else {
       const m = question.match(/(\d{1,2})\s*[月\-\/]\s*(\d{1,2})/);
@@ -255,7 +305,12 @@ window.ShuijingAgent = (function () {
     if (!almanac || !personal) return null;
 
     const diffDays = Math.round((new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()) - todayStart) / 86400000);
-    const dayLabel = diffDays === 0 ? '今日'
+    const dayLabel = isEn() ? (diffDays === 0 ? 'Today'
+      : diffDays === 1 ? 'Tomorrow'
+      : diffDays === 2 ? 'The day after tomorrow'
+      : diffDays === -1 ? 'Yesterday'
+      : `${almanac.year}-${String(almanac.month).padStart(2, '0')}-${String(almanac.day).padStart(2, '0')}`)
+      : diffDays === 0 ? '今日'
       : diffDays === 1 ? '明日'
       : diffDays === 2 ? '后日'
       : diffDays === -1 ? '昨日'
@@ -271,7 +326,144 @@ window.ShuijingAgent = (function () {
     return pool.slice(0, limit).map(h => `${h.ganzhi}(${h.range})`);
   }
 
+  /** 英文内置推演回复（与中文分支共用同一确定性数据） */
+  function generateLocalReplyEn(question) {
+    const I18n = window.YunjianI18n;
+    const tab = state.activeTab;
+    const ctx = state.context[tab];
+    const name = state.profile?.name || 'friend';
+    const q = question.trim();
+    const el = (x) => (I18n.ELEMENT_EN[x] || x);
+    const dir = (x) => (I18n.DIR_EN[x] || x);
+    const finance = /stock|invest|fund|crypto|money|wealth|financ|trade|trading/i;
+    const wear = /wear|color|colour|outfit|cloth|dress/i;
+    const work = /sign|contract|deal|cooperat|partner|interview|career|job|work|business/i;
+    const love = /love|date|dating|crush|confess|romance|relationship/i;
+    const travel = /travel|trip|direction|lucky hour|good hour|move|moving|journey/i;
+    const asksTopic = /tomorrow|yesterday|today|tonight/i.test(q) || finance.test(q) || wear.test(q) || work.test(q) || love.test(q) || travel.test(q);
+
+    if ((tab === 'today' && ctx) || (asksTopic && tab !== 'divination')) {
+      const resolved = resolveDateContext(q, state.context.today);
+      if (resolved) {
+        const { personal, dayLabel, dateKey } = resolved;
+        const almanac = I18n.localizeAlmanac ? I18n.localizeAlmanac(resolved.almanac) : resolved.almanac;
+        const dimMap = Object.fromEntries(personal.dimensions.map(d => [d.key, d.score]));
+        const goodHours = pickPracticalGoodHours(almanac, 3).map(h => h.replace(/^[^(]*/, '').replace(/[()]/g, ''));
+        const hoursTxt = goodHours.join(' / ') || 'midday';
+
+        if (finance.test(q)) {
+          const ws = dimMap.wealth ?? personal.overall;
+          const tone = ws >= 82
+            ? 'your money energy is strong and thinking is clear — follow your own rules, build positions gradually or take profits.'
+            : ws >= 70
+              ? 'a steady range — favor research, regular small investments or light positions; avoid chasing highs.'
+              : 'a bit volatile — emotions may follow the market, so watch more, act less and avoid adding impulsively.';
+          return `Hi ${name}, here is the money outlook for ${dayLabel} (${dateKey}):\n\n` +
+            `✦ Overall ${personal.overall} pts · Wealth ${ws} pts · Keyword: ${personal.keyword}\n` +
+            `✦ Reading: ${tone}\n` +
+            `✦ Almanac: favorable for ${almanac.yi.slice(0, 3).join(', ')}; wealth direction ${dir(resolved.almanac.caishen)}; good daytime hours ${hoursTxt}.\n` +
+            `✦ Reminder: this is a mindset and rhythm reference only, not investment advice — rely on fundamentals, position sizing and stop-losses.`;
+        }
+
+        if (wear.test(q) && almanac.wardrobe) {
+          const w = almanac.wardrobe;
+          const [best, good, mid, , avoid] = w.tiers;
+          const pal = (t) => (I18n.PALETTE_EN[t.element] || t.colors);
+          return `Hi ${name}, your Five-Element wardrobe guide for ${dayLabel} (${dateKey}, day element ${el(w.dayElement)}):\n\n` +
+            `✦ Best — Noble Color: ${pal(best)} (attracts helpful people and goodwill)\n` +
+            `✦ Good — Partner Color: ${pal(good)} (meetings and negotiations)\n` +
+            `✦ Neutral — Wealth Color: ${pal(mid)} (focused effort)\n` +
+            `✦ Avoid large areas of: ${pal(avoid)}\n` +
+            `✦ Best signs: ${w.zodiacLuck.best.map(a => I18n.ANIMAL_EN[a] || a).join(', ')}.`;
+        }
+
+        if (work.test(q)) {
+          const cs = dimMap.career ?? personal.overall;
+          return `Hi ${name}, career & deal outlook for ${dayLabel} (${dateKey} · ${almanac.jianchuName}):\n\n` +
+            `✦ Overall ${personal.overall} pts · Career ${cs} pts (${personal.keyword})\n` +
+            `✦ Almanac: favorable for ${almanac.yi.slice(0, 3).join(', ')}; avoid ${almanac.ji.slice(0, 3).join(', ')}.\n` +
+            `✦ Suggested hours: ${hoursTxt}. ${cs >= 80 ? 'Momentum is good — prepare well and go for it.' : 'Double-check the terms and leave room to negotiate.'}`;
+        }
+
+        if (love.test(q)) {
+          const ls = dimMap.love ?? personal.overall;
+          return `Hi ${name}, relationship outlook for ${dayLabel} (${dateKey}):\n\n` +
+            `✦ Love ${ls} pts · Social ${dimMap.social} pts · Joy direction ${dir(resolved.almanac.xishen)}\n` +
+            `✦ Tip: ${ls >= 80 ? 'emotional resonance is high — a good time to reach out, express your feelings or plan a relaxed dinner.' : 'a gentle rhythm — listen more, stay relaxed, and trust builds naturally.'}\n` +
+            `✦ Good times to meet: ${goodHours.slice(0, 2).join(' / ') || hoursTxt}.`;
+        }
+
+        if (travel.test(q)) {
+          return `${dayLabel} (${dateKey}): wealth direction ${dir(resolved.almanac.caishen)}, joy direction ${dir(resolved.almanac.xishen)}, ${almanac.chongSha}, day Nayin ${almanac.nayin}.\n\n` +
+            `✦ Good daytime hours: ${hoursTxt}.\n` +
+            `✦ Practical tip: schedule key trips, meetings or decisions in these windows — treat it as a gentle planning cue.`;
+        }
+
+        const top = [...personal.dimensions].sort((a, b) => b.score - a.score)[0];
+        const dimEn = { career: 'Career', wealth: 'Wealth', love: 'Love', health: 'Health', social: 'Social' };
+        return `Hi ${name}, here is your combined reading for ${dayLabel} (${dateKey}):\n\n` +
+          `1. Personal energy: ${personal.overall} pts, keyword “${personal.keyword}”; strongest area is ${dimEn[top.key] || top.label} (${top.score}).\n` +
+          `2. Almanac: ${almanac.jianchuName}; favorable for ${almanac.yi.slice(0, 3).join(', ')}; avoid ${almanac.ji.slice(0, 3).join(', ')}.\n` +
+          `3. Action: ${personal.summary} Try using ${goodHours[0] || 'your best-focus hours'} for core tasks.`;
+      }
+    }
+
+    if (tab === 'bazi' && ctx) {
+      const { bazi, cycle } = ctx;
+      const curLn = cycle.liunian.find(l => l.isCurrent) || cycle.liunian[0];
+      const curDy = cycle.dayun.find(d => d.isCurrent) || cycle.dayun[1];
+      if (/element|balance|wuxing/i.test(q)) {
+        return `${name}, ${bazi.wuxingNote}\n\n✦ Everyday ideas: spend time in nature (Wood), get sunlight and move (Fire), keep regular meals and routines (Earth), declutter your space (Metal), hydrate and journal (Water) — lean toward the element you lack.`;
+      }
+      if (/cycle|dayun|decade|10-year/i.test(q)) {
+        return `${name}, you are in the ${curDy.range} cycle (${curDy.pillar} · ${curDy.label}).\n\n✦ Theme: ${curDy.theme}\n✦ With your Ziwei star ${bazi.ziweiStar.name}, this year ${curLn.year} (${curLn.tag}) focuses on: ${curLn.tip}`;
+      }
+      return `${name}, connecting your BaZi, Ziwei and annual cycle:\n\n` +
+        `✦ Day Master: ${bazi.dayMaster.title}\n` +
+        `✦ Ziwei star: ${bazi.ziweiStar.name} (${bazi.ziweiStar.category}) — ${bazi.ziweiStar.keywords}\n` +
+        `✦ ${curLn.year} (${curLn.score} pts): “${curLn.tag}”. ${curLn.tip}`;
+    }
+
+    if (tab === 'trends' && ctx) {
+      const { trend, horoscope, ranking } = ctx;
+      const peak = [...trend.filter(t => t.offset >= 0)].sort((a, b) => b.score - a.score)[0];
+      const top1 = ranking[0];
+      const zn = (s) => (I18n.ZODIAC_EN[s.id] || s.name);
+      return `${name}, your coming week and today’s zodiac board:\n\n` +
+        `✦ Peak day: ${peak.dateKey} (${peak.score} pts · ${peak.keyword}) — good for key talks, launches or important meetings.\n` +
+        `✦ ${zn(horoscope.sign)} today: lucky color ${horoscope.luckyColor}, lucky number ${horoscope.luckyNumber}.\n` +
+        `✦ Today’s #1 sign is ${zn(top1)} (${top1.score} pts).`;
+    }
+
+    if (tab === 'compatibility' && ctx) {
+      return `Reading ${ctx.pairTitle} (resonance ${ctx.score} pts · ${ctx.tag}):\n\n✦ Foundation: ${ctx.summary}\n✦ Strengths: ${ctx.pros}\n✦ Advice: ${ctx.advice}`;
+    }
+
+    if (tab === 'divination') {
+      if (!ctx) return `${name}, you haven’t drawn yet. Shake a fortune lot or draw 1 / 3 tarot cards first, then ask me again.`;
+      if (ctx.type === 'qian') {
+        return `Your lot: ${ctx.data.num} · ${ctx.data.rank} · “${ctx.data.title}”\n\n“${ctx.data.poem.replace(/\n/g, ' / ')}”\n\n✦ Meaning: ${ctx.data.meaning}\n✦ Guidance: ${ctx.data.guide}`;
+      }
+      const lines = ctx.cards.map(c => `· ${c.position}: ${c.en} (${c.orientationLabel}) — ${c.keywords}. ${c.advice}`).join('\n');
+      return `${name}, your ${ctx.cards.length}-card spread:\n\n${lines}\n\n✦ Overall: treat the cards as a mirror for reflection — act decisively when things flow, steady yourself and adjust when reversed.`;
+    }
+
+    if (tab === 'review' && ctx) {
+      const { stats, list } = ctx;
+      if (stats.count === 0) return `${name}, no check-ins yet. Not superstition — reflection: rate your real day each evening for 3+ days and I’ll help you spot your patterns.`;
+      const latest = list[0];
+      const diff = latest.actual - latest.predicted;
+      const diffText = Math.abs(diff) <= 8 ? 'your feeling closely matched the forecast — your rhythm is smooth.'
+        : diff > 8 ? `you felt ${diff} pts better than forecast — your own actions lifted the day.`
+          : `you felt ${Math.abs(diff)} pts below forecast — check whether energy went to non-core tasks.`;
+      return `${name}, reviewing ${stats.count} days of check-ins:\n\n✦ Avg. match ${stats.avgAccuracy}% (feeling ${stats.avgActual} vs forecast ${stats.avgPredicted})\n✦ Latest (${latest.dateKey} · ${I18n.trMood ? I18n.trMood(latest.mood) : latest.mood}): ${diffText}\n✦ Tip: keep logging 1–2 weeks and notice what you did on your best days.`;
+    }
+
+    return `Hi ${name}, I can interpret your profile, almanac, BaZi cycles, horoscope and check-ins anytime. Use ⚙ to switch avatars or connect your own LLM API.`;
+  }
+
   function generateLocalReply(question) {
+    if (isEn()) return generateLocalReplyEn(question);
     const tab = state.activeTab;
     const ctx = state.context[tab];
     const name = state.profile?.name || '道友';
@@ -463,7 +655,7 @@ window.ShuijingAgent = (function () {
     state.isBusy = true;
 
     appendMessage('user', q);
-    const thinkingBubble = appendMessage('ai', '水镜先生正在推演命盘与星象矩阵...');
+    const thinkingBubble = appendMessage('ai', isEn() ? 'Master Shuijing is reading your chart and the stars...' : '水镜先生正在推演命盘与星象矩阵...');
 
     try {
       let answer;
@@ -475,7 +667,7 @@ window.ShuijingAgent = (function () {
       }
       await streamToBubble(thinkingBubble, answer);
     } catch (err) {
-      const fallback = `（外接大模型暂未响应：${err.message}，已自动切回内置智能推演）\n\n` + generateLocalReply(q);
+      const fallback = (isEn() ? `(LLM API unavailable: ${err.message}. Switched to the built-in engine.)\n\n` : `（外接大模型暂未响应：${err.message}，已自动切回内置智能推演）\n\n`) + generateLocalReply(q);
       await streamToBubble(thinkingBubble, fallback);
     } finally {
       state.isBusy = false;
@@ -491,7 +683,7 @@ window.ShuijingAgent = (function () {
     appendMessage('ai', en
       ? 'Greetings, traveler. I am Master Shuijing, the AI sage of YunJian.\n' +
         'I have synced your birth profile and all six modules — ask me about today’s lucky colors, your BaZi chart, trends, compatibility, tarot, or your daily review.\n' +
-        'Tip: I understand English best when an LLM API is connected via ⚙; the built-in engine replies mainly in Chinese.'
+        'Tip: use ⚙ to switch avatars or connect your own LLM API.'
       : '道友幸会，老夫乃「水镜运见」首席 AI 智者——水镜先生。\n' +
         '我已同步你的生辰档案与全站六大模块数据，既能为你解盘择吉、看流年大运，也能陪你做每日「复盘对账」。\n' +
         '点击右上角「⚙」可随时切换我的 3 款古装形象或接入你的大模型 API。'
@@ -529,7 +721,9 @@ window.ShuijingAgent = (function () {
       localStorage.setItem(STORAGE_API, JSON.stringify(state.apiConfig));
       updateEngineTag();
       settingsPanel.classList.add('hidden');
-      appendMessage('ai', hasLiveApi()
+      appendMessage('ai', isEn() ? (hasLiveApi()
+        ? `LLM connected (${state.apiConfig.model || 'default model'}). Replies will now be generated by the LLM using your live chart.`
+        : 'Settings updated — using the built-in engine.') : hasLiveApi()
         ? `已接入大模型（${state.apiConfig.model || '默认模型'}），接下来的解说将结合你的实时命盘由大模型生成。`
         : '配置已更新，当前使用内置智能推演引擎。'
       );
@@ -543,7 +737,13 @@ window.ShuijingAgent = (function () {
       localStorage.removeItem(STORAGE_API);
       updateEngineTag();
       settingsPanel.classList.add('hidden');
-      appendMessage('ai', '已切回内置本地智能推演引擎，零配置随时畅问。');
+      appendMessage('ai', isEn() ? 'Switched back to the built-in engine — no setup needed.' : '已切回内置本地智能推演引擎，零配置随时畅问。');
+    });
+
+    window.addEventListener('yunjian:langchange', () => {
+      renderQuickPrompts();
+      updateContextUI();
+      updateEngineTag();
     });
 
     const form = document.getElementById('agentForm');
