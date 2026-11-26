@@ -129,7 +129,14 @@ window.YunjianI18n = (function () {
       saveApiBtn: '保存配置',
       clearApiBtn: '切回内置引擎',
       agentInputPh: '向水镜先生提问（如：明天适合买股票吗？）',
-      sendBtn: '发送'
+      sendBtn: '发送',
+      shareCardBtn: '✦ 生成分享卡片',
+      shareModalTitle: '每日五行穿衣分享卡片',
+      shareModalSub: '1080×1440 竖版高清图 · 适配小红书、朋友圈与 Pinterest',
+      shareCardLangLbl: '卡片语言版本',
+      shareCaptionLbl: '一键配文（含热门标签，可直接发布）',
+      downloadCardBtn: '⬇ 下载高清 PNG 卡片',
+      copyCaptionBtn: '📋 一键复制发布文案'
     },
     en: {
       docTitle: 'Shuijing YunJian · yunjians.com — Eastern Astrology, Five-Element Guide, Tarot & AI Sage',
@@ -238,7 +245,14 @@ window.YunjianI18n = (function () {
       mood3: 'Pleasant Surprise',
       mood2: 'Calm & Easy',
       mood1: 'Smooth & Productive',
-      scoreUnit: 'pts'
+      scoreUnit: 'pts',
+      shareCardBtn: '✦ Share Card',
+      shareModalTitle: 'Daily Five-Element Share Card',
+      shareModalSub: '1080×1440 HD Portrait · Ready for Pinterest, IG & Xiaohongshu',
+      shareCardLangLbl: 'Poster Language',
+      shareCaptionLbl: 'Ready-to-Post Caption & Hashtags',
+      downloadCardBtn: '⬇ Download HD PNG',
+      copyCaptionBtn: '📋 Copy Post Caption'
     }
   };
 

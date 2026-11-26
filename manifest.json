@@ -1,0 +1,18 @@
+{
+  "name": "水镜运见 · Shuijing YunJian",
+  "short_name": "水镜运见",
+  "description": "每日五行穿衣指南、智能老黄历、八字紫微、星座塔罗与水镜先生 AI 智者。Daily Five-Element Lucky Colors, BaZi, Tarot & AI Sage.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070B14",
+  "theme_color": "#070B14",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

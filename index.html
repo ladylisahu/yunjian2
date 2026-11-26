@@ -12,11 +12,17 @@
   <meta property="og:title" content="水镜运见 · Shuijing YunJian — Eastern Astrology, Five-Element Guide & AI Sage" />
   <meta property="og:description" content="Daily personal fortune, Chinese Almanac, Five-Element Lucky Color Wardrobe, BaZi & Ziwei, Zodiac Ranking, Tarot Spread & Master Shuijing AI." />
   <meta name="twitter:card" content="summary_large_image" />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B1325'/%3E%3Crect x='4' y='4' width='56' height='56' rx='11' fill='none' stroke='%23E5B96B' stroke-width='2.5'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-size='26' fill='%23E5B96B' font-family='serif'%3E運%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
+  <link rel="apple-touch-icon" href="assets/icon.svg" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#070B14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="水镜运见" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=2.3" />
+  <link rel="stylesheet" href="css/style.css?v=2.4" />
 </head>
 <body>
   <!-- 科技星象动态背景 -->
@@ -229,7 +235,10 @@
             <h2 data-i18n="wardrobeTitle">每日五行穿衣指南</h2>
             <span class="muted-note" id="wardrobeSubtitle">按当日地支五行生克推演 · 切换上方日期自动同步</span>
           </div>
-          <span class="badge badge-gold" id="wardrobeDayElBadge">当日五行：水</span>
+          <div class="wardrobe-header-actions">
+            <span class="badge badge-gold" id="wardrobeDayElBadge">当日五行：水</span>
+            <button type="button" class="btn btn-outline btn-sm" id="openShareCardBtn" data-i18n="shareCardBtn">✦ 生成分享卡片</button>
+          </div>
         </div>
 
         <div class="wardrobe-list" id="wardrobeList"></div>
@@ -656,13 +665,54 @@
     </form>
   </aside>
 
-  <script src="js/calendar.js?v=2.3"></script>
-  <script src="js/bazi.js?v=2.3"></script>
-  <script src="js/horoscope.js?v=2.3"></script>
-  <script src="js/divination.js?v=2.3"></script>
-  <script src="js/fortune.js?v=2.3"></script>
-  <script src="js/i18n.js?v=2.3"></script>
-  <script src="js/agent.js?v=2.3"></script>
-  <script src="js/app.js?v=2.3"></script>
+  <!-- ==================== 每日五行穿衣分享卡片弹窗 ==================== -->
+  <div class="share-modal hidden" id="shareCardModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="share-modal-dialog card">
+      <div class="card-header-row" style="margin-bottom: 14px;">
+        <div>
+          <h2 data-i18n="shareModalTitle">每日五行穿衣分享卡片</h2>
+          <span class="muted-note" data-i18n="shareModalSub">1080×1440 竖版高清图 · 适配小红书、朋友圈与 Pinterest</span>
+        </div>
+        <button type="button" class="icon-btn" id="closeShareCardBtn" aria-label="关闭">✕</button>
+      </div>
+
+      <div class="share-modal-body">
+        <div class="share-preview-col">
+          <canvas id="shareCardCanvas" class="hidden" width="1080" height="1440"></canvas>
+          <img id="shareCardPreviewImg" class="share-preview-img" alt="每日五行穿衣分享卡片预览" />
+        </div>
+
+        <div class="share-controls-col">
+          <div class="form-group">
+            <label data-i18n="shareCardLangLbl">卡片语言版本</label>
+            <div class="segmented-control" id="shareCardLangSwitch">
+              <button type="button" class="seg-btn active" data-cardlang="zh">中文版 · 小红书</button>
+              <button type="button" class="seg-btn" data-cardlang="en">English · Pinterest</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="shareCardCaption" data-i18n="shareCaptionLbl">一键配文（含热门标签，可直接发布）</label>
+            <textarea id="shareCardCaption" rows="9" class="input-field share-caption-box" readonly></textarea>
+          </div>
+
+          <div class="share-action-btns">
+            <button type="button" class="btn btn-primary" id="downloadShareCardBtn" data-i18n="downloadCardBtn">⬇ 下载高清 PNG 卡片</button>
+            <button type="button" class="btn btn-outline" id="copyShareCaptionBtn" data-i18n="copyCaptionBtn">📋 一键复制发布文案</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/calendar.js?v=2.4"></script>
+  <script src="js/bazi.js?v=2.4"></script>
+  <script src="js/horoscope.js?v=2.4"></script>
+  <script src="js/divination.js?v=2.4"></script>
+  <script src="js/fortune.js?v=2.4"></script>
+  <script src="js/i18n.js?v=2.4"></script>
+  <script src="js/sharecard.js?v=2.4"></script>
+  <script src="js/agent.js?v=2.4"></script>
+  <script src="js/app.js?v=2.4"></script>
 </body>
 </html>

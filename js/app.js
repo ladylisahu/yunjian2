@@ -22,6 +22,7 @@
   let currentCompatMode = 'zodiac';
   let selectedMood = '顺遂高效';
   let currentTrendSeries = [];
+  let lastRawAlmanac = null;
 
   function isSameDay(a, b) {
     return a.getFullYear() === b.getFullYear() &&
@@ -140,7 +141,9 @@
   // ==================== 1. 今日运势 · 黄历 ====================
   function renderTodayView(date) {
     currentDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    const alm = locAlm(Cal.getAlmanac(currentDate));
+    const rawAlm = Cal.getAlmanac(currentDate);
+    lastRawAlmanac = rawAlm;
+    const alm = locAlm(rawAlm);
     const personal = Fortune.getDailyPersonalFortune(profile, currentDate);
     const now = new Date();
     const viewingToday = isSameDay(currentDate, now);
@@ -280,6 +283,14 @@
     document.getElementById('todayBtn').addEventListener('click', () => {
       renderTodayView(new Date());
     });
+    const shareBtn = document.getElementById('openShareCardBtn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', () => {
+        if (window.YunjianShareCard && lastRawAlmanac) {
+          window.YunjianShareCard.open(lastRawAlmanac);
+        }
+      });
+    }
   }
 
   // ==================== 2. 八字紫微 · 大运流年 ====================
@@ -698,6 +709,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     if (I18n) I18n.applyStaticDOM();
     if (Agent) Agent.init();
+    if (window.YunjianShareCard) window.YunjianShareCard.init();
     initNavigation();
     initProfileBar();
     renderTicker();
@@ -706,5 +718,9 @@
     initDivination();
     initReviewForm();
     refreshAllProfileBoundViews();
+
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
   });
 })();
